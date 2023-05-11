@@ -1,0 +1,654 @@
+[gd_scene load_steps=10 format=3 uid="uid://chinfrxym514"]
+
+[ext_resource type="FontFile" uid="uid://bp17nvk3j288l" path="res://assets/fonts/1joystix.ttf" id="1_ts3ii"]
+[ext_resource type="Script" path="res://scripts/maingame.gd" id="1_uv0v1"]
+[ext_resource type="Theme" uid="uid://dng1b8hg8dwph" path="res://scenes/themes/joytheme.tres" id="1_wq132"]
+[ext_resource type="Theme" uid="uid://c0hnxfle6b2xb" path="res://scenes/themes/joytheme_20px_txt.tres" id="5_a0024"]
+[ext_resource type="Texture2D" uid="uid://coo77b4o3e215" path="res://assets/images/Game_Complete1.jpg" id="5_xduv3"]
+[ext_resource type="Texture2D" uid="uid://5fxoqi8quj6s" path="res://assets/images/Vector_Isometric_office_a.png" id="6_nn3gn"]
+
+[sub_resource type="GDScript" id="GDScript_i4cty"]
+script/source = "extends MenuBar
+
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	
+	pass # Replace with function body.
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta):
+	pass
+
+"
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wamkx"]
+bg_color = Color(0.172549, 0.745098, 0.807843, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.984314, 0.984314, 0.984314, 1)
+
+[sub_resource type="Theme" id="Theme_1w214"]
+default_font = ExtResource("1_ts3ii")
+default_font_size = 20
+
+[node name="MainGame" type="Node2D"]
+script = ExtResource("1_uv0v1")
+
+[node name="GameLayer" type="CanvasLayer" parent="."]
+
+[node name="MainMenuBar" type="MenuBar" parent="GameLayer"]
+offset_right = 40.0
+offset_bottom = 40.0
+script = SubResource("GDScript_i4cty")
+
+[node name="MainMenu" type="MenuButton" parent="GameLayer/MainMenuBar"]
+layout_mode = 0
+offset_right = 8.0
+offset_bottom = 8.0
+tooltip_text = "Game Main Menu"
+theme = ExtResource("1_wq132")
+theme_override_colors/font_color = Color(0.984314, 0.984314, 0.984314, 1)
+theme_override_colors/font_hover_color = Color(0.611765, 0.941176, 0.984314, 1)
+theme_override_colors/font_focus_color = Color(0.611765, 0.941176, 0.984314, 1)
+theme_override_fonts/font = ExtResource("1_ts3ii")
+theme_override_font_sizes/font_size = 32
+text = "Main Menu"
+item_count = 5
+popup/item_0/text = "Save"
+popup/item_0/id = 0
+popup/item_1/text = "Load Game"
+popup/item_1/id = 1
+popup/item_2/text = "Game Menu"
+popup/item_2/id = 2
+popup/item_3/text = ""
+popup/item_3/id = 3
+popup/item_3/separator = true
+popup/item_4/text = "Quit"
+popup/item_4/id = 4
+
+[node name="Resources" type="MenuButton" parent="GameLayer/MainMenuBar"]
+layout_mode = 0
+offset_left = 950.0
+offset_right = 1201.0
+offset_bottom = 47.0
+tooltip_text = "Developer Resources"
+theme = ExtResource("1_wq132")
+theme_override_colors/font_color = Color(0.984314, 0.984314, 0.984314, 1)
+theme_override_colors/font_hover_color = Color(0.611765, 0.941176, 0.984314, 1)
+theme_override_colors/font_focus_color = Color(0.611765, 0.941176, 0.984314, 1)
+theme_override_fonts/font = ExtResource("1_ts3ii")
+theme_override_font_sizes/font_size = 32
+text = "Resources"
+item_count = 5
+popup/item_0/text = "Create Game"
+popup/item_0/id = 0
+popup/item_1/text = "Game History"
+popup/item_1/id = 1
+popup/item_2/text = "Revenue"
+popup/item_2/id = 2
+popup/item_3/text = "Bank"
+popup/item_3/id = 3
+popup/item_4/text = "Info"
+popup/item_4/id = 4
+
+[node name="Line2D" type="Line2D" parent="GameLayer"]
+points = PackedVector2Array(0, 60, 1200, 60)
+width = 8.0
+default_color = Color(0.984314, 0.984314, 0.984314, 1)
+
+[node name="CurrentTotGameProgress" type="ProgressBar" parent="GameLayer"]
+offset_left = 442.0
+offset_top = 757.0
+offset_right = 682.0
+offset_bottom = 787.0
+tooltip_text = "Game Creation Progress
+"
+theme = ExtResource("5_a0024")
+theme_override_colors/font_color = Color(0.984314, 0.984314, 0.984314, 1)
+theme_override_styles/fill = SubResource("StyleBoxFlat_wamkx")
+
+[node name="lblCurrentTotGameProgress" type="Label" parent="GameLayer"]
+offset_left = 10.0
+offset_top = 760.0
+offset_right = 375.0
+offset_bottom = 787.0
+theme = ExtResource("5_a0024")
+text = "Game Development Progress:"
+
+[node name="MainGameBackground" type="TextureRect" parent="GameLayer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -301.0
+offset_top = -233.5
+offset_right = 301.0
+offset_bottom = 233.5
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("6_nn3gn")
+stretch_mode = 2
+
+[node name="GameNewLoad" type="Control" parent="GameLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GameNewLoadInfo" type="Panel" parent="GameLayer/GameNewLoad"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -220.0
+offset_right = 300.0
+offset_bottom = 74.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GNLINewGameLoadLbl" type="Label" parent="GameLayer/GameNewLoad/GameNewLoadInfo"]
+layout_mode = 0
+offset_left = 46.0
+offset_top = 26.0
+offset_right = 555.0
+offset_bottom = 152.0
+theme = SubResource("Theme_1w214")
+theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
+theme_override_font_sizes/font_size = 32
+text = "Start a new game, 
+or load an existing 
+one?"
+
+[node name="GNLINewGameBtn" type="Button" parent="GameLayer/GameNewLoad/GameNewLoadInfo"]
+layout_mode = 0
+offset_left = 52.0
+offset_top = 192.0
+offset_right = 244.0
+offset_bottom = 234.0
+theme = ExtResource("5_a0024")
+theme_override_colors/font_hover_color = Color(0.611765, 0.941176, 0.984314, 1)
+theme_override_colors/font_focus_color = Color(0.611765, 0.941176, 0.984314, 1)
+theme_override_font_sizes/font_size = 28
+text = "New Game"
+
+[node name="GNLILoadGameBtn" type="Button" parent="GameLayer/GameNewLoad/GameNewLoadInfo"]
+offset_left = 341.0
+offset_top = 192.0
+offset_right = 556.0
+offset_bottom = 234.0
+theme = ExtResource("5_a0024")
+theme_override_colors/font_hover_color = Color(0.611765, 0.941176, 0.984314, 1)
+theme_override_colors/font_focus_color = Color(0.611765, 0.941176, 0.984314, 1)
+theme_override_font_sizes/font_size = 28
+text = "Load Game"
+
+[node name="NewGameCollectInfo" type="Control" parent="GameLayer"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="NewGameInfo" type="Panel" parent="GameLayer/NewGameCollectInfo"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -220.0
+offset_right = 300.0
+offset_bottom = 220.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="NGCompanyNameLbl" type="Label" parent="GameLayer/NewGameCollectInfo/NewGameInfo"]
+layout_mode = 0
+offset_left = 26.0
+offset_top = 46.0
+offset_right = 424.0
+offset_bottom = 73.0
+theme = SubResource("Theme_1w214")
+theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
+text = "Enter Your Company Name:"
+
+[node name="NGCompanyNameStr" type="LineEdit" parent="GameLayer/NewGameCollectInfo/NewGameInfo"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 83.0
+offset_right = 580.0
+offset_bottom = 137.0
+theme = ExtResource("5_a0024")
+
+[node name="NGUserFirstNameLbl" type="Label" parent="GameLayer/NewGameCollectInfo/NewGameInfo"]
+layout_mode = 0
+offset_left = 26.0
+offset_top = 153.0
+offset_right = 424.0
+offset_bottom = 180.0
+theme = SubResource("Theme_1w214")
+theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
+text = "Enter Your First Name:"
+
+[node name="NGUserFirstNameStr" type="LineEdit" parent="GameLayer/NewGameCollectInfo/NewGameInfo"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 190.0
+offset_right = 580.0
+offset_bottom = 244.0
+theme = ExtResource("5_a0024")
+
+[node name="NGUserLastNameLbl" type="Label" parent="GameLayer/NewGameCollectInfo/NewGameInfo"]
+layout_mode = 0
+offset_left = 26.0
+offset_top = 261.0
+offset_right = 424.0
+offset_bottom = 288.0
+theme = SubResource("Theme_1w214")
+theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
+text = "Enter Your Last Name:"
+
+[node name="NGUserLastNameStr" type="LineEdit" parent="GameLayer/NewGameCollectInfo/NewGameInfo"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 298.0
+offset_right = 580.0
+offset_bottom = 352.0
+theme = ExtResource("5_a0024")
+
+[node name="NGOkBtn" type="Button" parent="GameLayer/NewGameCollectInfo/NewGameInfo"]
+layout_mode = 0
+offset_left = 533.0
+offset_top = 380.0
+offset_right = 575.0
+offset_bottom = 412.0
+theme = ExtResource("5_a0024")
+theme_override_colors/font_hover_color = Color(0.611765, 0.941176, 0.984314, 1)
+theme_override_colors/font_focus_color = Color(0.611765, 0.941176, 0.984314, 1)
+text = "ok"
+
+[node name="GameDevComplete" type="Control" parent="GameLayer"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GameDevCompletePnl" type="Panel" parent="GameLayer/GameDevComplete"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -220.0
+offset_right = 300.0
+offset_bottom = 220.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TextureRect" type="TextureRect" parent="GameLayer/GameDevComplete/GameDevCompletePnl"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("5_xduv3")
+expand_mode = 1
+
+[node name="GDCOkBtn" type="Button" parent="GameLayer/GameDevComplete/GameDevCompletePnl"]
+layout_mode = 0
+offset_left = 533.0
+offset_top = 397.0
+offset_right = 575.0
+offset_bottom = 429.0
+theme = ExtResource("5_a0024")
+theme_override_colors/font_hover_color = Color(0.611765, 0.941176, 0.984314, 1)
+theme_override_colors/font_focus_color = Color(0.611765, 0.941176, 0.984314, 1)
+text = "ok"
+
+[node name="GDCGameCompleteLbl" type="Label" parent="GameLayer/GameDevComplete/GameDevCompletePnl"]
+layout_mode = 0
+offset_left = 69.0
+offset_top = 31.0
+offset_right = 690.0
+offset_bottom = 80.0
+theme = SubResource("Theme_1w214")
+theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
+theme_override_font_sizes/font_size = 38
+text = "Game Completed!"
+
+[node name="GameDevHistory" type="Control" parent="GameLayer"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HistoryInfo" type="Panel" parent="GameLayer/GameDevHistory"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -220.0
+offset_right = 300.0
+offset_bottom = 220.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GDHGameDevHistLbl" type="Label" parent="GameLayer/GameDevHistory/HistoryInfo"]
+layout_mode = 2
+offset_left = 45.0
+offset_top = 19.0
+offset_right = 460.0
+offset_bottom = 46.0
+theme = SubResource("Theme_1w214")
+theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
+text = "Game Development Hisotry:"
+
+[node name="GDHVertScrollCon" type="ScrollContainer" parent="GameLayer/GameDevHistory/HistoryInfo"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -254.0
+offset_top = -171.0
+offset_right = 260.0
+offset_bottom = 147.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GDHVBoxCon" type="VBoxContainer" parent="GameLayer/GameDevHistory/HistoryInfo/GDHVertScrollCon"]
+layout_mode = 2
+
+[node name="GDHOkBtn" type="Button" parent="GameLayer/GameDevHistory/HistoryInfo"]
+layout_mode = 0
+offset_left = 533.0
+offset_top = 397.0
+offset_right = 575.0
+offset_bottom = 429.0
+theme = ExtResource("5_a0024")
+theme_override_colors/font_hover_color = Color(0.611765, 0.941176, 0.984314, 1)
+theme_override_colors/font_focus_color = Color(0.611765, 0.941176, 0.984314, 1)
+text = "ok"
+
+[node name="NewGameDev" type="Control" parent="GameLayer"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="NGDInfo" type="Panel" parent="GameLayer/NewGameDev"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -220.0
+offset_right = 300.0
+offset_bottom = 220.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="NGDGameTitlelbl" type="Label" parent="GameLayer/NewGameDev/NGDInfo"]
+layout_mode = 2
+offset_left = 27.0
+offset_top = 19.0
+offset_right = 442.0
+offset_bottom = 46.0
+theme = SubResource("Theme_1w214")
+theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
+text = "Game Tile:"
+
+[node name="NGDGameTitleStr" type="LineEdit" parent="GameLayer/NewGameDev/NGDInfo"]
+offset_left = 25.0
+offset_top = 53.0
+offset_right = 581.0
+offset_bottom = 98.0
+theme = ExtResource("5_a0024")
+
+[node name="NGDTopiclbl" type="Label" parent="GameLayer/NewGameDev/NGDInfo"]
+offset_left = 27.0
+offset_top = 106.0
+offset_right = 442.0
+offset_bottom = 133.0
+theme = SubResource("Theme_1w214")
+theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
+text = "Game Topic:"
+
+[node name="NGDTopicStr" type="LineEdit" parent="GameLayer/NewGameDev/NGDInfo"]
+offset_left = 25.0
+offset_top = 140.0
+offset_right = 581.0
+offset_bottom = 185.0
+theme = ExtResource("5_a0024")
+
+[node name="NGDGenrelbl" type="Label" parent="GameLayer/NewGameDev/NGDInfo"]
+offset_left = 27.0
+offset_top = 199.0
+offset_right = 442.0
+offset_bottom = 226.0
+theme = SubResource("Theme_1w214")
+theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
+text = "Game Genre:"
+
+[node name="NGDGenreStr" type="LineEdit" parent="GameLayer/NewGameDev/NGDInfo"]
+offset_left = 25.0
+offset_top = 233.0
+offset_right = 581.0
+offset_bottom = 278.0
+theme = ExtResource("5_a0024")
+
+[node name="NGDOkBtn" type="Button" parent="GameLayer/NewGameDev/NGDInfo"]
+layout_mode = 0
+offset_left = 533.0
+offset_top = 397.0
+offset_right = 575.0
+offset_bottom = 429.0
+theme = ExtResource("5_a0024")
+theme_override_colors/font_hover_color = Color(0.611765, 0.941176, 0.984314, 1)
+theme_override_colors/font_focus_color = Color(0.611765, 0.941176, 0.984314, 1)
+text = "ok"
+
+[node name="LoadedGameData" type="Control" parent="GameLayer"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LoadedGameInfo" type="Panel" parent="GameLayer/LoadedGameData"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -220.0
+offset_right = 300.0
+offset_bottom = 220.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LGICompanyNameLbl" type="Label" parent="GameLayer/LoadedGameData/LoadedGameInfo"]
+layout_mode = 0
+offset_left = 26.0
+offset_top = 46.0
+offset_right = 424.0
+offset_bottom = 73.0
+theme = SubResource("Theme_1w214")
+theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
+text = "Your Company Name:"
+
+[node name="LGICompanyNameStr" type="LineEdit" parent="GameLayer/LoadedGameData/LoadedGameInfo"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 83.0
+offset_right = 580.0
+offset_bottom = 137.0
+theme = ExtResource("5_a0024")
+editable = false
+
+[node name="LGIUserFirstNameLbl" type="Label" parent="GameLayer/LoadedGameData/LoadedGameInfo"]
+layout_mode = 0
+offset_left = 26.0
+offset_top = 153.0
+offset_right = 424.0
+offset_bottom = 180.0
+theme = SubResource("Theme_1w214")
+theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
+text = "Your First Name:"
+
+[node name="LGIUserFirstNameStr" type="LineEdit" parent="GameLayer/LoadedGameData/LoadedGameInfo"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 190.0
+offset_right = 580.0
+offset_bottom = 244.0
+theme = ExtResource("5_a0024")
+editable = false
+
+[node name="LIGUserLastNameLbl" type="Label" parent="GameLayer/LoadedGameData/LoadedGameInfo"]
+layout_mode = 0
+offset_left = 26.0
+offset_top = 261.0
+offset_right = 424.0
+offset_bottom = 288.0
+theme = SubResource("Theme_1w214")
+theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
+text = "Your Last Name:"
+
+[node name="LGIUserLastNameStr" type="LineEdit" parent="GameLayer/LoadedGameData/LoadedGameInfo"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 298.0
+offset_right = 580.0
+offset_bottom = 352.0
+theme = ExtResource("5_a0024")
+editable = false
+
+[node name="LGIOkBtn" type="Button" parent="GameLayer/LoadedGameData/LoadedGameInfo"]
+layout_mode = 0
+offset_left = 533.0
+offset_top = 380.0
+offset_right = 575.0
+offset_bottom = 412.0
+theme = ExtResource("5_a0024")
+theme_override_colors/font_hover_color = Color(0.611765, 0.941176, 0.984314, 1)
+theme_override_colors/font_focus_color = Color(0.611765, 0.941176, 0.984314, 1)
+text = "ok"
+
+[node name="GCIGameDayslbl" type="Label" parent="GameLayer"]
+offset_left = 932.0
+offset_top = 565.0
+offset_right = 1098.0
+offset_bottom = 592.0
+theme = SubResource("Theme_1w214")
+theme_override_colors/font_color = Color(0.984314, 0.984314, 0.984314, 1)
+text = "Game Days:"
+
+[node name="GCIGameDaysValuelbl" type="Label" parent="GameLayer"]
+offset_left = 932.0
+offset_top = 595.0
+offset_right = 1098.0
+offset_bottom = 622.0
+theme = SubResource("Theme_1w214")
+theme_override_colors/font_color = Color(0.984314, 0.984314, 0.984314, 1)
+text = "0"
+
+[node name="GCIDayMultilbl" type="Label" parent="GameLayer"]
+offset_left = 932.0
+offset_top = 638.0
+offset_right = 1113.0
+offset_bottom = 665.0
+theme = SubResource("Theme_1w214")
+theme_override_colors/font_color = Color(0.984314, 0.984314, 0.984314, 1)
+text = "Multiplier:"
+
+[node name="GCIDayMultiValuelbl" type="Label" parent="GameLayer"]
+offset_left = 932.0
+offset_top = 668.0
+offset_right = 1098.0
+offset_bottom = 695.0
+theme = SubResource("Theme_1w214")
+theme_override_colors/font_color = Color(0.984314, 0.984314, 0.984314, 1)
+text = "1x"
+
+[node name="GCITimeMultiplyhs" type="HSlider" parent="GameLayer"]
+offset_left = 938.0
+offset_top = 720.0
+offset_right = 1184.0
+offset_bottom = 736.0
+min_value = 1.0
+max_value = 4.0
+value = 1.0
+
+[node name="GCStartbtn" type="Button" parent="GameLayer"]
+offset_left = 1092.0
+offset_top = 752.0
+offset_right = 1183.0
+offset_bottom = 784.0
+theme = ExtResource("5_a0024")
+theme_override_colors/font_hover_color = Color(0.611765, 0.941176, 0.984314, 1)
+theme_override_colors/font_focus_color = Color(0.611765, 0.941176, 0.984314, 1)
+text = "Start
+"
+
+[node name="GCPausebtn" type="Button" parent="GameLayer"]
+offset_left = 935.0
+offset_top = 753.0
+offset_right = 1026.0
+offset_bottom = 785.0
+theme = ExtResource("5_a0024")
+theme_override_colors/font_hover_color = Color(0.611765, 0.941176, 0.984314, 1)
+theme_override_colors/font_focus_color = Color(0.611765, 0.941176, 0.984314, 1)
+text = "Pause"
+
+[connection signal="visibility_changed" from="GameLayer/GameNewLoad" to="." method="_on_game_new_load_visibility_changed"]
+[connection signal="pressed" from="GameLayer/GameNewLoad/GameNewLoadInfo/GNLINewGameBtn" to="." method="_on_gnli_new_game_btn_pressed"]
+[connection signal="pressed" from="GameLayer/GameNewLoad/GameNewLoadInfo/GNLILoadGameBtn" to="." method="_on_gnli_load_game_btn_pressed"]
+[connection signal="visibility_changed" from="GameLayer/NewGameCollectInfo" to="." method="_on_new_game_collect_info_visibility_changed"]
+[connection signal="pressed" from="GameLayer/NewGameCollectInfo/NewGameInfo/NGOkBtn" to="." method="_on_ng_ok_btn_pressed"]
+[connection signal="visibility_changed" from="GameLayer/GameDevComplete" to="." method="_on_game_dev_complete_visibility_changed"]
+[connection signal="pressed" from="GameLayer/GameDevComplete/GameDevCompletePnl/GDCOkBtn" to="." method="_on_gdc_ok_btn_pressed"]
+[connection signal="visibility_changed" from="GameLayer/GameDevHistory" to="." method="_on_game_dev_history_visibility_changed"]
+[connection signal="pressed" from="GameLayer/GameDevHistory/HistoryInfo/GDHOkBtn" to="." method="_on_gdh_ok_btn_pressed"]
+[connection signal="visibility_changed" from="GameLayer/NewGameDev" to="." method="_on_new_game_dev_visibility_changed"]
+[connection signal="pressed" from="GameLayer/NewGameDev/NGDInfo/NGDOkBtn" to="." method="_on_ngd_ok_btn_pressed"]
+[connection signal="visibility_changed" from="GameLayer/LoadedGameData" to="." method="_on_loaded_game_data_visibility_changed"]
+[connection signal="pressed" from="GameLayer/LoadedGameData/LoadedGameInfo/LGIOkBtn" to="." method="_on_lgi_ok_btn_pressed"]
+[connection signal="value_changed" from="GameLayer/GCITimeMultiplyhs" to="." method="_on_gci_time_multiplyhs_value_changed"]
+[connection signal="pressed" from="GameLayer/GCStartbtn" to="." method="_on_gc_startbtn_pressed"]
+[connection signal="pressed" from="GameLayer/GCPausebtn" to="." method="_on_gc_pausebtn_pressed"]

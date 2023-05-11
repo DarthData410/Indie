@@ -1,0 +1,32 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="Indie - Game Dev Sim"
+config/description="Simulation game about, indie game development. You start out in the year 2015, boot strapping your new indie game development company. You must make decisions about the type of technology, games themes, story lines, genre, platforms (web, desktop, mobile, gaming system, etc.) The goal is to build your company, and compete, to become a successful game studio."
+run/main_scene="res://scenes/main_menu_control.tscn"
+config/features=PackedStringArray("4.0", "GL Compatibility")
+boot_splash/bg_color=Color(0.984314, 0.984314, 0.984314, 1)
+boot_splash/image="res://Banner_B_050823.png"
+config/icon="res://assets/images/basic_controller.png"
+boot_splash/minimum_display_time=3000
+
+[display]
+
+window/size/viewport_width=1200
+window/size/viewport_height=800
+window/size/resizable=false
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+environment/defaults/default_clear_color=Color(0.313726, 0.568627, 0.717647, 1)
