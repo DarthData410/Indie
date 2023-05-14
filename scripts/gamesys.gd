@@ -10,4 +10,6 @@ func msgdialog(text: String, title: String = "Error Title"):
 	dialog.popup_centered()
 	pass
 
-
+func nexp():
+	msgdialog("Can not spend over total amount allocated for your current XP level.","Not Enough XP")
+	pass

@@ -17,6 +17,7 @@ class GameClock:
 	var _gameDays:int = 0
 	var _elaspedMS:int # ms of actual time elasped
 	var _iterations:int
+	var _current_game_timer_wait_percent:float = 1
 	var _current_game_timer_wait:float = 0.5
 	func _init():
 		pass
@@ -62,6 +63,10 @@ class GameClock:
 			self._current_game_timer_wait = 0.0625
 			v = tm.four
 		self._multiplier = v
+		self._current_game_timer_wait_percent = self._current_game_timer_wait/0.5 # base day of 500 ms
+	func GetGameTimerWaitPercent() -> float:
+		return self._current_game_timer_wait_percent
+	
 	func to_dict() -> Dictionary:
 		var ret:Dictionary = {
 			baseTime = self._baseTime,

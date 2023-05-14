@@ -11,22 +11,23 @@ var gdata = load("res://scripts/data/gamedata.gd").new()
 @onready var indie_save_game = "user://indie_game_data.save"
 @onready var gs = gsave.GameSave.new(indie_save_game)
 
-@onready var playerData : Dictionary = {
-	company_name = "<company name here>",
-	first_name = "<first name here>",
-	last_name = "<last name here>",
-	game_id = 0,
-	game_diffuclty = 0
-}
+# Initialize starting point of playerData dict:
+@onready var playerData : Dictionary = pC.playerData
 
 @onready var playerGames : Array
 @onready var mmenu_popup = $GameLayer/MainMenuBar/MainMenu.get_popup()
 @onready var resmenu_popup = $GameLayer/MainMenuBar/Resources.get_popup()
 
+# Phase Data Variables:
+# Design Phase:
+var CDesignPhase = gdata.CurrentDesignPhase
+
 # Time Objects:
 @onready var game_clock = gc.GameClock.new()
 @onready var game_timer:Timer = Timer.new()
 @onready var game_dev_timer1:Timer = Timer.new()
+@onready var game_dev_timer1_valcheck
+@onready var game_dev_testing_inprogress = false
 @onready var game_dev_inprogress:bool = false
 @onready var game_running:bool = false
 
@@ -85,8 +86,10 @@ func _on_main_menu_index_pressed(index):
 	match index:
 		0: # Save Game
 			_save_player_data()
+			gsys.msgdialog("Your progress has been saved.","Game Saved")
 		1: # Load Game
 			_load_player_data()
+			gsys.msgdialog("Your game has been loaded.","Game Loaded")
 		2: # Game Menu
 			get_tree().change_scene_to_file("res://scenes/main_menu_control.tscn")
 		4: # Quit
@@ -156,9 +159,9 @@ func _load_player_games():
 
 func _on_game_dev_timer1_timeout():
 	var v = $GameLayer/CurrentTotGameProgress.value
-	v = v + 0.5
+	v = v + 1
 	$GameLayer/CurrentTotGameProgress.value = v
-	if $GameLayer/CurrentTotGameProgress.value < 100:
+	if $GameLayer/CurrentTotGameProgress.value < game_dev_timer1_valcheck:
 		game_dev_timer1.start()
 	else:
 		_load_player_games()
@@ -191,6 +194,12 @@ func _on_gdc_ok_btn_pressed():
 	$GameLayer/GameDevComplete/GameDevCompletePnl/PlatformWebA.visible = false
 	$GameLayer/GameDevComplete/GameDevCompletePnl/PlatformGameSystemA.visible = false
 	$GameLayer/GameDevComplete/GameDevCompletePnl/PlatformMobileA.visible = false
+	
+	$GameLayer/GameDevComplete/GameDevCompletePnl/GDCGameTitleLbl.text = "Title:"
+	$GameLayer/GameDevComplete/GameDevCompletePnl/GDCGameTopicLbl.text = "Topic:"
+	$GameLayer/GameDevComplete/GameDevCompletePnl/GDCGameGenreLbl.text = "Genre:"
+	$GameLayer/GameDevComplete/GameDevCompletePnl/GDCGamePlatformLbl.text = "Platform:"
+	
 	$GameLayer/GameDevComplete.visible = false
 	pass # Replace with function body.
 
@@ -237,6 +246,20 @@ func _on_ngd_next_btn_pressed():
 		gsys.msgdialog("All fields must be filled / selected before proceeding. \n Please fill out completely, then click 'next'.","Can't Continue...")
 
 func _on_ngd_ok_btn_pressed():
+	var stylelist = $GameLayer/NewGameDev/NGDInfo2/NGDStyleList
+	var sizelist = $GameLayer/NewGameDev/NGDInfo2/NGDSizeList
+	var audiencelist = $GameLayer/NewGameDev/NGDInfo2/NGDAudienceList
+	var platformlist = $GameLayer/NewGameDev/NGDInfo2/NGDPlatformList
+	if stylelist.is_anything_selected() and sizelist.is_anything_selected() and audiencelist.is_anything_selected() and platformlist.is_anything_selected():
+		$GameLayer/NewGameDev/NGDInfo2.visible = false
+		CDesignPhase = gdata.CurrentDesignPhase
+		$GameLayer/NewGameDev/NGDDesignPhase/NGDTotPointslbl.text = str(pC.get_phasetot(playerData.player_phaseXP.design))
+		$GameLayer/NewGameDev/NGDDesignPhase.visible = true
+		
+	else:
+		gsys.msgdialog("All fields must be filled / selected before proceeding. \n Please fill out completely, then click 'next'.","Can't Continue...")
+
+func _on_NewGameDev_complete():
 	var titlestr = $GameLayer/NewGameDev/NGDInfo/NGDGameTitleStr
 	var topiclist = $GameLayer/NewGameDev/NGDInfo/NGDTopicsList
 	var genrelist = $GameLayer/NewGameDev/NGDInfo/NGDGenresList
@@ -257,8 +280,20 @@ func _on_ngd_ok_btn_pressed():
 		if game_dev_timer1.is_stopped():			
 			var npc = pC.playerGameClass.new(titletxt,topictxt,genretxt,styletxt,sizetxt,audiencetxt,platformtxt,playerData.game_id)
 			npc.set_datenow() # TODO: Have system date & time vs. game date & time
+			# Set timer1 wait based on the phaseXP & Game Size calculations:
+			
+			# TESTING ************* FOR DESIGN PHASE ***********
+			npc.calc_xpwait(playerData.player_phaseXP)
+			game_dev_timer1.wait_time = npc.phaseXPWait.design
+			$GameLayer/CurrentTotGameProgress.max_value = int(CDesignPhase.Graphics + CDesignPhase.UI + CDesignPhase.GamePlay + CDesignPhase.Audio)*game_dev_timer1.wait_time
+			game_dev_timer1_valcheck = $GameLayer/CurrentTotGameProgress.max_value
+			#var gdt:float = game_dev_timer1_valcheck * game_dev_timer1.wait_time
+			#gsys.msgdialog("Total Days to Complete Design Phase: \n" + str(gdt),"Game Day Total")
+			# ***************************************
+			
 			playerGames.append(npc)
 			game_dev_inprogress = true
+			
 			game_dev_timer1.start()
 			# clear selections:
 			titlestr.text = ""
@@ -335,7 +370,7 @@ func _on_gci_time_multiplyhs_value_changed(value):
 	_pause_game()
 	game_clock.CalcMultiplyValues(value)
 	game_timer.wait_time = game_clock.GetGameTimerWait()
-	game_dev_timer1.wait_time = game_clock.GetGameTimerWait() # Sync of timers
+	game_dev_timer1.wait_time = game_dev_timer1.wait_time*game_clock.GetGameTimerWaitPercent()
 	$GameLayer/GCIDayMultiValuelbl.text = str(value) + "x"
 	pass # Replace with function body.
 
@@ -383,3 +418,66 @@ func _load_gamedata_values():
 	for t in NGDOps.platforms:
 		$GameLayer/NewGameDev/NGDInfo2/NGDPlatformList.add_item(t)
 
+
+func _on_h_slide_graphics_value_changed(value):
+	_design_phase_slider_xp_check(
+		$GameLayer/NewGameDev/NGDDesignPhase/HSlideGraphics,
+		$GameLayer/NewGameDev/NGDDesignPhase/NGDGraphicsValuelbl,
+		"CDesignPhase.Graphics"
+	)
+
+func _on_h_slide_ui_value_changed(value):
+	_design_phase_slider_xp_check(
+		$GameLayer/NewGameDev/NGDDesignPhase/HSlideUI,
+		$GameLayer/NewGameDev/NGDDesignPhase/NGDUIValuelbl,
+		"CDesignPhase.UI"
+	)
+
+func _on_h_slide_game_play_value_changed(value):
+	_design_phase_slider_xp_check(
+		$GameLayer/NewGameDev/NGDDesignPhase/HSlideGamePlay,
+		$GameLayer/NewGameDev/NGDDesignPhase/NGDGamePlayValuelbl,
+		"CDesignPhase.GamePlay"
+	)
+
+func _on_h_slide_audio_value_changed(value):
+	_design_phase_slider_xp_check(
+		$GameLayer/NewGameDev/NGDDesignPhase/HSlideAudio,
+		$GameLayer/NewGameDev/NGDDesignPhase/NGDAudioValuelbl,
+		"CDesignPhase.Audio"
+	)
+	
+# Design Phase XP Check, used by each slider:
+func _design_phase_slider_xp_check(x,y,z):
+	if pC.test_designphase(x,CDesignPhase) > pC.get_phasetot(playerData.player_phaseXP.design):
+		gsys.nexp()
+		x.value = 0
+	else:
+		y.text = str(x.value)
+		if z == "CDesignPhase.Audio":
+			CDesignPhase.Audio = x.value
+		elif z == "CDesignPhase.GamePlay":
+			CDesignPhase.GamePlay = x.value
+		elif z == "CDesignPhase.UI":
+			CDesignPhase.UI = x.value
+		elif z == "CDesignPhase.Graphics":
+			CDesignPhase.Graphics = x.value
+		$GameLayer/NewGameDev/NGDDesignPhase/NGDUsedPointslbl.text = str(pC.get_phaseused(CDesignPhase))
+	pass # Replace with function body.
+
+func _total_design_values() -> int:
+	var ret:int 
+	ret = CDesignPhase.Graphics + CDesignPhase.UI + CDesignPhase.GamePlay + CDesignPhase.Audio
+	return ret
+
+
+func _on_ngddp_next_btn_pressed():
+	_on_NewGameDev_complete()
+	$GameLayer/NewGameDev/NGDDesignPhase.visible = false
+	pass # Replace with function body.
+
+
+
+func _on_texture_button_pressed():
+	gsys.msgdialog("place holder for game sales/revenue.","place holder game sales")
+	pass # Replace with function body.

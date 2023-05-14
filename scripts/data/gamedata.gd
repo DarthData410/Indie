@@ -18,7 +18,10 @@ var NewGameDataOptions:Dictionary = {
 		"Sports",
 		"Dark",
 		"Humor",
-		"Flight"
+		"Flight",
+		"Business",
+		"Fitness",
+		"Arcade"
 	],
 	genres=[
 		"Action",
@@ -67,7 +70,7 @@ var NewGameDataOptions:Dictionary = {
 	]
 }
 
-var GamePhases:Dictionary = {
+var GamePhaseData:Dictionary = {
 	design=[
 		"Graphics",
 		"User Interface",
@@ -89,12 +92,12 @@ var GamePhases:Dictionary = {
 		"Marketing",
 		"Publish"
 	],
-	remake=[
+	support=[
 		"Free Bug Fixes",
 		"Free Feature Pack",
 		"Paid-For Feature Pack",
 		"New Platform",
-		"New Release"
+		"New Release" # Will spawn as new game, tied to previous version release
 	],
 	retire=[
 		"Remove From Market",
@@ -103,10 +106,26 @@ var GamePhases:Dictionary = {
 	]
 }	
 
+enum GamePhases {
+	design = 0,
+	development = 1,
+	testing = 2,
+	publishing = 3,
+	remake = 4,
+	retire = 5
+}
+
 enum GamePhaseLevels {
 	Basic = 0,
 	Expereinced = 1,
 	Professional = 2,
 	Elite = 3,
 	Pioneer = 4
+}
+
+var CurrentDesignPhase:Dictionary = {
+	Graphics = 0,
+	UI = 0,
+	GamePlay = 0,
+	Audio = 0
 }
