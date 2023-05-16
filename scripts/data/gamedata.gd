@@ -9,14 +9,14 @@ var NewGameDataOptions:Dictionary = {
 		"City Building",
 		"Historical",
 		"Military",
-		"Jungle",
+		"Dinosaurs",
 		"Puzzle",
 		"Dance",
 		"Music",
 		"Fantasy",
 		"Civilization Building",
 		"Sports",
-		"Dark",
+		"Horror",
 		"Humor",
 		"Flight",
 		"Business",
@@ -33,6 +33,7 @@ var NewGameDataOptions:Dictionary = {
 		"Simulation",
 		"Strategy",
 		"Survival",
+		"Tower Defense",
 		"Retro"
 	],
 	platforms=[
@@ -80,24 +81,34 @@ var GamePhaseData:Dictionary = {
 	development=[
 		"Game Engine",
 		"AI",
-		"Levels/Level Editor",
-		"HUD"
+		"Levels",
+		"Heads-Up-Display (HUD)"
 	],
 	testing=[
 		"Review",
 		"Bug Fix",
-		"Quality Grading",
+		"User Testing",
 	],
 	publish=[
-		"Marketing",
-		"Publish"
+		"Paid For",
+		"Free|In-Game Ads",
+		"Free|In-App Purchases",
+		"Yearly Subscription",
+		"OpenSource Sponserships"
+	],
+	marketing=[
+		"Search Engine Ads",
+		"Social Media Ads",
+		"Influncers",
+		"TV"
 	],
 	support=[
-		"Free Bug Fixes",
-		"Free Feature Pack",
-		"Paid-For Feature Pack",
-		"New Platform",
-		"New Release" # Will spawn as new game, tied to previous version release
+		"Free|Bug Fixes",
+		"Free|Feature Pack",
+		"Paid-For|Feature Pack",
+		"DLC|Downloaded Content",
+		"New|Platform Build",
+		"New|Release" # Will spawn as new game, tied to previous version release
 	],
 	retire=[
 		"Remove From Market",
@@ -111,7 +122,7 @@ enum GamePhases {
 	development = 1,
 	testing = 2,
 	publishing = 3,
-	remake = 4,
+	support = 4,
 	retire = 5
 }
 
@@ -128,4 +139,17 @@ var CurrentDesignPhase:Dictionary = {
 	UI = 0,
 	GamePlay = 0,
 	Audio = 0
+}
+
+var CurrentDevPhase:Dictionary = {
+	GameEngine = 0,
+	AI = 0,
+	Levels = 0,
+	HUD = 0
+}
+
+var CurrentTestPhase:Dictionary = {
+	Review = 0,
+	BugFix = 0,
+	UserTesting = 0
 }

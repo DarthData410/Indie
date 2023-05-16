@@ -19,8 +19,11 @@ class GameClock:
 	var _iterations:int
 	var _current_game_timer_wait_percent:float = 1
 	var _current_game_timer_wait:float = 0.5
+	var _baseDay:float = 0.5 # representing 500 ms = 1 in-game day
 	func _init():
 		pass
+	func GetBaseDay() -> float:
+		return _baseDay
 	func SetWaitTime(v:int):
 		self._baseTime = v
 	func GetWaitTime() -> int:
@@ -63,7 +66,7 @@ class GameClock:
 			self._current_game_timer_wait = 0.0625
 			v = tm.four
 		self._multiplier = v
-		self._current_game_timer_wait_percent = self._current_game_timer_wait/0.5 # base day of 500 ms
+		self._current_game_timer_wait_percent = self._current_game_timer_wait/self._baseDay # base day of 500 ms
 	func GetGameTimerWaitPercent() -> float:
 		return self._current_game_timer_wait_percent
 	
@@ -78,7 +81,7 @@ class GameClock:
 		return ret
 	static func from_dict(d:Dictionary) -> GameClock:
 		# function used to load from saved game data
-		var ret:GameClock
+		var ret:GameClock = GameClock.new()
 		ret.SetGameTimerWait(d.gameTimerWait)
 		ret.SetWaitTime(d.baseTime)
 		ret.SetGameDays(d.gameDays)

@@ -1,28 +1,11 @@
-# This file contains the main player classes used to support game play 
-
-# Starting playerData, with initial phaseXP levels 10, increases by:
-# Basic = Starting point = 1x 1 point = 1 day, out of 20 possible on each phase
-# Basic -> Exp - 25 points used = 2x 1 point = 0.5 day, out of 25 possible on each phase 
-# Exp -> Pro - 50 points used = 3x 1 point = 0.25 day, out of 30 possible on each phase
-# Pro -> Elite - 100 points used = 4x 1 point = 0.125 day, out of 35 possible on each phase
-# Elite -> Pioneer - 200 points used = 5x 1 point = 0.0625 day, out of 40 possible on each phase
-# ~~~~~~~~~~
-# Current version game size, will effect the time each XP point is spent over 
-# a course of game days. 
-# The base game day is that 500 ms @ 1x multiplier = 1 game day
-# ~~~:
-# FirstGame = x 0.75 (-)
-# Small = x 1.0 (=)
-# Medium = x 1.25 (+)
-# Large = x 1.5 (++)
-# Studio = x 2 (+++)
-# ----------------------------------->
+# This file contains the main player classes used to support game play (basically game engine)
+# Starting playerData, with initial phaseXP levels 10, increases by
 
 enum phasePoints {
-	Basic = 20,
-	Exp = 25,
-	Pro = 30,
-	Elite = 35,
+	Basic = 25,
+	Exp = 30,
+	Pro = 35,
+	Elite = 40,
 	Pioneer = 40
 }
 
@@ -30,17 +13,106 @@ var playerData : Dictionary = {
 	company_name = "<company name here>",
 	first_name = "<first name here>",
 	last_name = "<last name here>",
-	player_phaseXP = {
+	phaseXP = {
 		design = 1,
 		development = 1,
 		testing = 1,
 		publish = 1,
-		remake = 1,
+		support = 1,
 		retire = 1
+	},
+	phasePoints = {
+		design = 0,
+		development = 0,
+		testing = 0,
+		publish = 0,
+		support = 0,
+		retire = 0	
+	},
+	RD = {
+		topics = {
+			Space = {
+				level = 1,
+				XP = 0
+			},
+			Fantasy = {
+				level = 1,
+				XP = 0
+			},
+			Sports = {
+				level = 1,
+				XP = 0
+			},
+			Racing = {
+				level = 1,
+				XP = 0
+			}
+		},
+		genres = {
+			Action = {
+				level = 1,
+				XP = 0
+			},
+			Adventure = {
+				level = 1,
+				XP = 0
+			},
+			Platformer = {
+				level = 1,
+				XP = 0
+			}
+		},
+		platforms = {
+			Mindows = {
+				level = 1,
+				XP = 0
+			},
+			PearOS = {
+				level = 1,
+				XP = 0
+			},
+			Linx = {
+				level = 1,
+				XP = 0
+			}
+		},
+		audiences = {
+			Everyone = {
+				level = 1,
+				XP = 0
+			}
+		},
+		styles = {
+			TwoD = {
+				level = 1,
+				XP = 0,
+				label = "2d"
+			}
+		},
+		sizes = {
+			FirstGame = {
+				level = 1,
+				XP = 0
+			}
+		},
+		publishing = {
+			PaidFor = {
+				level = 1,
+				XP = 0,
+				label = "Paid For"
+			},
+			FreeInGameAds = {
+				level = 1,
+				XP = 0,
+				label = "Free|In-Game Ads"
+			}
+		}
 	},
 	game_id = 0,
 	game_diffuclty = 0
 }
+
+
 
 func get_phasetot(xp:int) -> int:
 	var ret:int = 0
@@ -62,18 +134,6 @@ func get_phaseused(d:Dictionary) -> int:
 	for k in d.keys():
 		ret += int(d[k])
 	return ret
-
-func test_designphase(x,CDesignPhase:Dictionary) -> int:
-	var ret:int = 0
-	if x.name == "HSSlideGraphics":
-		ret = x.value + CDesignPhase.UI + CDesignPhase.GamePlay + CDesignPhase.Audio 
-	elif x.name == "HSlideUI":
-		ret = x.value + + CDesignPhase.Graphics + CDesignPhase.GamePlay + CDesignPhase.Audio
-	elif x.name == "HSldeGamePlay":
-		ret = x.value + CDesignPhase.Graphics + CDesignPhase.UI + CDesignPhase.Audio
-	elif x.name == "HSlideAudio":
-		ret = x.value + + CDesignPhase.Graphics + CDesignPhase.UI + CDesignPhase.GamePlay
-	return ret
 	
 class playerGameClass:
 	var title:String
@@ -83,8 +143,11 @@ class playerGameClass:
 	var size:String
 	var audience:String
 	var platform:String
+	var price:float
+	var gameSales:Array # Used with Game Sales Event
+	var publishing:Dictionary # Entry from playerData.RD.publishing node.
 	# variables for in-game settings, XP, calculations, etc:
-	var phaseXPWait:Dictionary
+	var phaseXP:Dictionary
 	# game sys variables:
 	var game_id:int
 	var created_date:String
@@ -98,19 +161,22 @@ class playerGameClass:
 		self.platform = platform
 		self.game_id = game_id
 		
-		# initialize playerXP variables:
-		self.phaseXPWait = {
+		# initialize player_phaseXP variables:
+		self.phaseXP = {
 			design = 1,
 			development = 1,
 			testing = 1,
 			publish = 1,
-			remake = 1,
+			support = 1,
 			retire = 1
 		}
-		
+	func get_key() -> String:
+		var ret:String = "GK:"
+		ret = ret + "::" + self.title + "::" + self.topic + "::" + self.genre + "::" + self.platform
+		return ret
 	func get_str() -> String:
 		var ret:String
-		ret = "Game: " + self.title + "," + self.topic + "," + self.genre
+		ret = self.title + "," + self.topic + "," + self.genre + "," + self.platform
 		return ret
 	func set_datenow():
 		var time_return = Time.get_date_string_from_system(true)
@@ -126,37 +192,37 @@ class playerGameClass:
 		elif self.platform == "YBox" or self.platform == "PlayTrain" or self.platform == "Ninrendo":
 			ret = 3 # Game System
 		return ret
-	func calc_xpwait(d:Dictionary):
+	func calc_xpwait(d:Dictionary,day:float):
 		for k in d.keys():
 			var pp = d[k]
 			match pp:
 				1:
-					# 1 xp = 1 day
-					self.phaseXPWait[k] = (self.calc_sizemulti()*1)*0.5
+					# 1 xp = 1.25 day
+					self.phaseXP[k] = (self.calc_sizemulti()*1.25)*day
 				2:
-					# 1 xp = 0.5 day
-					self.phaseXPWait[k] = (self.calc_sizemulti()*0.5)*0.5
+					# 1 xp = 1.05 day
+					self.phaseXP[k] = (self.calc_sizemulti()*1.05)*day
 				3:
-					# 1 xp = 0.25 day
-					self.phaseXPWait[k] = (self.calc_sizemulti()*0.25)*0.5
+					# 1 xp = 0.95 day
+					self.phaseXP[k] = (self.calc_sizemulti()*0.95)*day
 				4:
-					# 1 xp = 0.125 day
-					self.phaseXPWait[k] = (self.calc_sizemulti()*0.125)*0.5
+					# 1 xp = 0.85 day
+					self.phaseXP[k] = (self.calc_sizemulti()*0.85)*day
 				5:
-					# 1 xp = 0.0625 day
-					self.phaseXPWait[k] = (self.calc_sizemulti()*0.0625)*0.5
+					# 1 xp = 0.65 day
+					self.phaseXP[k] = (self.calc_sizemulti()*0.65)*day
 	func calc_sizemulti() -> float:
 		var ret:float = 0
 		if self.size == "FirstGame":
-			ret = 0.75
-		elif self.size == "Small":
 			ret = 1
-		elif self.size == "Medium":
-			ret = 1.25
-		elif self.size == "Large":
+		elif self.size == "Small":
 			ret = 1.5
+		elif self.size == "Medium":
+			ret = 2.5
+		elif self.size == "Large":
+			ret = 4.0
 		elif self.size == "Studio":
-			ret = 2
+			ret = 5.0
 		return ret
 	func to_dict() -> Dictionary:
 		var ret:Dictionary = {
@@ -167,6 +233,10 @@ class playerGameClass:
 			size = self.size,
 			audience = self.audience,
 			platform = self.platform,
+			price = self.price,
+			gamesales = self.gameSales,
+			publishing = self.publishing,
+			phaseXP = self.phaseXP,
 			game_id = self.game_id,
 			created_date = self.created_date
 		}
@@ -175,6 +245,7 @@ class playerGameClass:
 		var ret:playerGameClass
 		ret = playerGameClass.new(d.title,d.topic,d.genre,d.style,d.size,d.audience,d.platform,d.game_id)
 		ret.created_date = d.created_date
+		ret.gameSales = d.gamesales
 		return ret
 	static func get_playerGamesDict(v:Array) -> Dictionary:
 		var playerGamesDict:Dictionary
@@ -185,5 +256,36 @@ class playerGameClass:
 			i+=1
 		return playerGamesDict
 		
-		
+
+enum gameEvents {
+	DEBUG = 0,
+	GameSales = 1
+}
+
+class gameEvent:
+	var Event:gameEvents
+	var EventArray:Array # Should be recorded as part of game data.
+	var GameKey:String
+	func _init(gkey:String,ea:Array,ge:gameEvents=gameEvents.DEBUG):
+		self.GameKey=gkey
+		self.EventArray = ea
+		self.Event = ge
+	func calcValue(x:float,y:float) -> float:
+		var ret:float = 0.0
+		ret = x*y
+		return ret
+
+class GameSalesEvent extends gameEvent:
+	func _init(gkey:String,ea:Array):
+		super._init(gkey,ea,gameEvents.GameSales)
+	func calcValue(x:float,y:float) -> float:
+		var ret:float = super.calcValue(x,y)
+		var price:float = 9.99 #
+		var game_days:int = 10 #
+		ret = (ret*price)
+		var dsr:Array
+		dsr = [[self.GameKey,game_days,ret]]
+		self.EventArray.append_array(dsr)
+		return ret
+	
 
