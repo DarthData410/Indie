@@ -153,3 +153,8 @@ var CurrentTestPhase:Dictionary = {
 	BugFix = 0,
 	UserTesting = 0
 }
+
+var CurrentPointsOfTot:Dictionary = {
+	points = 0,
+	total = 0
+}

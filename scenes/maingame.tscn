@@ -567,6 +567,7 @@ allow_reselect = true
 same_column_width = true
 
 [node name="NGDBackBtn" type="Button" parent="GameLayer/NewGameDev/NGDInfo2"]
+layout_mode = 0
 offset_left = 449.0
 offset_top = 397.0
 offset_right = 491.0
@@ -774,6 +775,7 @@ text = "0
 "
 
 [node name="NGDBackBtn" type="Button" parent="GameLayer/NewGameDev/NGDDesignPhase"]
+layout_mode = 0
 offset_left = 449.0
 offset_top = 397.0
 offset_right = 491.0
@@ -981,6 +983,7 @@ text = "0
 "
 
 [node name="NGDBackBtn" type="Button" parent="GameLayer/NewGameDev/NGDDevPhase"]
+layout_mode = 0
 offset_left = 449.0
 offset_top = 397.0
 offset_right = 491.0
@@ -1149,6 +1152,7 @@ text = "0
 "
 
 [node name="NGDBackBtn" type="Button" parent="GameLayer/NewGameDev/NGDTestPhase"]
+layout_mode = 0
 offset_left = 303.0
 offset_top = 23.0
 offset_right = 345.0
@@ -1332,6 +1336,7 @@ theme_override_colors/font_focus_color = Color(0.611765, 0.941176, 0.984314, 1)
 text = "game details"
 
 [node name="GDHExitBtn" type="Button" parent="GameLayer/GameDevHistory/HistoryInfo"]
+layout_mode = 0
 offset_left = 368.0
 offset_top = 397.0
 offset_right = 574.0

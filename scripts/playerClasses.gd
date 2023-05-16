@@ -9,6 +9,12 @@ enum phasePoints {
 	Pioneer = 40
 }
 
+enum PhasePossiblePoints {
+	design = 40,
+	development = 40,
+	testing = 30
+}
+
 var playerData : Dictionary = {
 	company_name = "<company name here>",
 	first_name = "<first name here>",
@@ -33,86 +39,96 @@ var playerData : Dictionary = {
 		topics = {
 			Space = {
 				level = 1,
-				XP = 0
+				XP = 10
 			},
 			Fantasy = {
 				level = 1,
-				XP = 0
+				XP = 10
 			},
 			Sports = {
 				level = 1,
-				XP = 0
+				XP = 10
 			},
 			Racing = {
 				level = 1,
-				XP = 0
+				XP = 10
 			}
 		},
 		genres = {
 			Action = {
 				level = 1,
-				XP = 0
+				XP = 10
 			},
 			Adventure = {
 				level = 1,
-				XP = 0
+				XP = 10
 			},
 			Platformer = {
 				level = 1,
-				XP = 0
+				XP = 10
 			}
 		},
 		platforms = {
 			Mindows = {
 				level = 1,
-				XP = 0
+				XP = 10
 			},
 			PearOS = {
 				level = 1,
-				XP = 0
+				XP = 10
 			},
 			Linx = {
 				level = 1,
-				XP = 0
+				XP = 10
 			}
 		},
 		audiences = {
 			Everyone = {
 				level = 1,
-				XP = 0
+				XP = 10
 			}
 		},
 		styles = {
 			TwoD = {
 				level = 1,
-				XP = 0,
+				XP = 10,
 				label = "2d"
 			}
 		},
 		sizes = {
 			FirstGame = {
 				level = 1,
-				XP = 0
+				XP = 10
 			}
 		},
 		publishing = {
 			PaidFor = {
 				level = 1,
-				XP = 0,
+				XP = 10,
 				label = "Paid For"
 			},
 			FreeInGameAds = {
 				level = 1,
-				XP = 0,
+				XP = 10,
 				label = "Free|In-Game Ads"
 			}
 		}
 	},
 	game_id = 0,
-	game_diffuclty = 0
+	game_diffuclty = 0 # Effect $, ratings, bugs, etc. 
 }
 
+# Initialized New Game playerGameRatings Dictionary:
+var playerGameRatings:Dictionary = {
+	Ratings = []
+}
 
+# Initialized phaseXPused for a new game, that is developed:
+var gamePhaseXPUsed:Dictionary = {
+	design = 0,
+	development = 0,
+	testing = 0
+}
 
 func get_phasetot(xp:int) -> int:
 	var ret:int = 0
@@ -136,6 +152,7 @@ func get_phaseused(d:Dictionary) -> int:
 	return ret
 	
 class playerGameClass:
+	var key:String # OS.get_unique_id() | String
 	var title:String
 	var topic:String
 	var genre:String
@@ -144,7 +161,9 @@ class playerGameClass:
 	var audience:String
 	var platform:String
 	var price:float
+	var phaseXPused:Dictionary # Actual values selected by user for: design, dev, testing
 	var gameSales:Array # Used with Game Sales Event
+	var gameSalesDays:int # Starting with 0, # of days game on market for sale
 	var publishing:Dictionary # Entry from playerData.RD.publishing node.
 	# variables for in-game settings, XP, calculations, etc:
 	var phaseXP:Dictionary
@@ -152,6 +171,7 @@ class playerGameClass:
 	var game_id:int
 	var created_date:String
 	func _init(title,topic,genre,style,size,audience,platform,game_id):
+		self.key = OS.get_unique_id()
 		self.title = title
 		self.genre = genre
 		self.topic = topic
@@ -170,10 +190,9 @@ class playerGameClass:
 			support = 1,
 			retire = 1
 		}
+		self.gameSalesDays = 0
 	func get_key() -> String:
-		var ret:String = "GK:"
-		ret = ret + "::" + self.title + "::" + self.topic + "::" + self.genre + "::" + self.platform
-		return ret
+		return self.key
 	func get_str() -> String:
 		var ret:String
 		ret = self.title + "," + self.topic + "," + self.genre + "," + self.platform
@@ -224,6 +243,11 @@ class playerGameClass:
 		elif self.size == "Studio":
 			ret = 5.0
 		return ret
+	func calc_gameSalesTot() -> float:
+		var ret:float = 0
+		for a in self.gameSales:
+			ret += a[2]
+		return ret
 	func to_dict() -> Dictionary:
 		var ret:Dictionary = {
 			title = self.title,
@@ -233,6 +257,7 @@ class playerGameClass:
 			size = self.size,
 			audience = self.audience,
 			platform = self.platform,
+			phasexpused = self.phaseXPused,
 			price = self.price,
 			gamesales = self.gameSales,
 			publishing = self.publishing,
@@ -246,6 +271,7 @@ class playerGameClass:
 		ret = playerGameClass.new(d.title,d.topic,d.genre,d.style,d.size,d.audience,d.platform,d.game_id)
 		ret.created_date = d.created_date
 		ret.gameSales = d.gamesales
+		ret.phaseXPused = d.phasexpused
 		return ret
 	static func get_playerGamesDict(v:Array) -> Dictionary:
 		var playerGamesDict:Dictionary
@@ -257,35 +283,132 @@ class playerGameClass:
 		return playerGamesDict
 		
 
+class playerResearch:
+	var playerData:Dictionary
+	func _init(d:Dictionary):
+		self.playerData = d
+	func _calcTopics():
+		var xp:int=0
+		var lvl:int=1
+		for k in self.playerData.RD.topics.keys():
+			xp = int(self.playerData.RD.topics[k]["XP"])
+			if xp >= 20 and xp < 50:
+				lvl = 2
+			elif xp >= 50 and xp < 80:
+				lvl = 3
+			elif xp >= 80 and xp < 120:
+				lvl = 4
+			elif xp >= 120 and xp < 170:
+				lvl = 5
+			elif xp >= 170:
+				lvl = 6
+			else:
+				lvl = 1
+			self.playerData.RD.topics[k]["level"] = lvl
+	func calcResearch(d:Dictionary):
+		self.playerData = d
+		self._calcTopics()
+
 enum gameEvents {
 	DEBUG = 0,
-	GameSales = 1
+	GameSales = 1,
+	GameRating = 2
 }
 
 class gameEvent:
 	var Event:gameEvents
 	var EventArray:Array # Should be recorded as part of game data.
 	var GameKey:String
-	func _init(gkey:String,ea:Array,ge:gameEvents=gameEvents.DEBUG):
+	var GameDay:int
+	func _init(gkey:String,ea:Array,gd:int,ge:gameEvents=gameEvents.DEBUG):
 		self.GameKey=gkey
 		self.EventArray = ea
 		self.Event = ge
+		self.GameDay = gd
 	func calcValue(x:float,y:float) -> float:
 		var ret:float = 0.0
 		ret = x*y
 		return ret
 
+class GameRatingAgent:
+	var Rate:float = 0
+	func _init(base:float,bump:float=0,agent:String="Indie.GameReviews"):
+		if agent == "Indie.GameReviews":
+			self.Rate = base*randf_range(1.01,1.09)
+		elif agent == "Gamer.Weekly":
+			self.Rate = base*randf_range(0.89,1.05)
+		elif agent == "Games.What":
+			self.Rate = base*randf_range(0.95,1.15)
+		self.Rate = self.Rate+bump
+	
+
+class GameRatingsEvent extends gameEvent:
+	var Agent:String
+	var go:playerGameClass
+	var RD:Dictionary
+	var weighted:float
+	var factor:float
+	func _init(gkey:String,ea:Array,gd:int,g:playerGameClass,rd:Dictionary,w:float=1,f:float=0,gra:String="Indie.GameReviews"):
+		self.Agent = gra
+		self.go = g
+		self.RD = rd
+		self.weighted = w
+		self.factor = f
+		super._init(gkey,ea,gd,gameEvents.GameRating)
+	func _calcRD() -> float:
+		var ret:float = 0 # NOTE: /100 to equate each to a 0.x value, the threshold based rating effect
+		var topic = self.RD.topics[self.go.topic]["level"] # Level first
+		topic = topic * (float(self.RD.topics[self.go.topic]["XP"])/100) # XP
+		var genre = self.RD.genres[self.go.genre]["level"] # Level first
+		genre = genre * (float(self.RD.genres[self.go.genre]["XP"])/100) # XP
+		var platform = self.RD.platforms[self.go.platform]["level"] # Level first
+		platform = platform * (float(self.RD.platforms[self.go.platform]["XP"])/100) # XP
+		var audience = self.RD.audiences[self.go.audience]["level"] # Level first
+		audience = audience * (float(self.RD.audiences[self.go.audience]["XP"])/100) # XP
+		ret = (topic+genre+platform+audience)/4
+		return ret
+	func _calcPhases() -> float:
+		var ret:float = 0
+		var design:float = float(self.go.phaseXPused["design"]) / PhasePossiblePoints.design
+		var dev:float = float(self.go.phaseXPused["development"]) / PhasePossiblePoints.development
+		var test:float = float(self.go.phaseXPused["testing"]) / PhasePossiblePoints.testing
+		ret = (design + dev + test) / 3
+		return ret
+	func _calcWeighted(p:float) -> float:
+		var ret:float = 0
+		ret = (p*self.weighted)+self.factor
+		return ret
+	func _calcBump() -> float:
+		var ret:float = 0
+		if self.go.size == "FirstGame":
+			ret = randf_range(0.85,1.05)
+		return ret
+	func _calcRate(p:float,rd:float) -> float:
+		var ret:float = 0
+		var GameRateAgent:GameRatingAgent = GameRatingAgent.new(p,self._calcBump(),self.Agent)
+		ret = ((p*3)+GameRateAgent.Rate+rd)/5
+		ret = self._calcWeighted(ret)
+		return ret
+	func calcValue(x:float,y:float) -> float:
+		var ret:float = super.calcValue(x,y) # x,y can influence the scoring
+		ret = ((self._calcRate(self._calcPhases(),self._calcRD())) * ret) * 10 # 1-10 scoring
+		ret = roundf(ret)
+		var ra:Array
+		ra = [[self.GameKey,self.GameDay,ret,self.Agent]]
+		self.EventArray.append_array(ra)
+		return ret
+
 class GameSalesEvent extends gameEvent:
-	func _init(gkey:String,ea:Array):
-		super._init(gkey,ea,gameEvents.GameSales)
+	var GamePrice:float
+	func _init(gkey:String,ea:Array,gd:int,gp:float):
+		self.GamePrice = gp
+		super._init(gkey,ea,gd,gameEvents.GameSales)
 	func calcValue(x:float,y:float) -> float:
 		var ret:float = super.calcValue(x,y)
-		var price:float = 9.99 #
-		var game_days:int = 10 #
-		ret = (ret*price)
+		ret = (ret*self.GamePrice)
 		var dsr:Array
-		dsr = [[self.GameKey,game_days,ret]]
+		dsr = [[self.GameKey,self.GameDay,ret]]
 		self.EventArray.append_array(dsr)
 		return ret
-	
+
 

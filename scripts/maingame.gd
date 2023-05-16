@@ -13,6 +13,7 @@ var gdata = load("res://scripts/data/gamedata.gd").new()
 
 # Initialize starting point of playerData dict:
 @onready var playerData : Dictionary = pC.playerData
+@onready var CurrentPointsOfTot : Dictionary = gdata.CurrentPointsOfTot
 
 @onready var playerGames : Array
 @onready var selectedPlayerGame
@@ -30,6 +31,10 @@ var CTestPhase = gdata.CurrentTestPhase
 
 # Sales Objects:
 @onready var GameSalesEvt
+@onready var gameSalesMax:int = 20 #TODO Add logic for different publishing options | DEBUG @ 20
+
+# Ratings Objects:
+@onready var GameRatings:Dictionary = pC.playerGameRatings
 
 # Time Objects:
 @onready var game_clock = gc.GameClock.new()
@@ -47,34 +52,44 @@ func _ready():
 	_load_game_info()
 	mmenu_popup.connect("index_pressed",self._on_main_menu_index_pressed)
 	resmenu_popup.connect("index_pressed",self._on_resmenu_index_pressed)
-	game_dev_timer1.connect("timeout",self._on_game_dev_timer1_timeout)
-	game_dev_timer1.wait_time = game_clock.GetBaseDay()
-	game_dev_timer1.one_shot = true
-	add_child(game_dev_timer1)
-	
-	# Add Game Clock to main game loop:
-	game_timer.connect("timeout",self.game_clock_timeout)
-	game_timer.wait_time = game_clock.GetBaseDay()
-	game_timer.one_shot = true
-	add_child(game_timer)
-	
-	# Add game sales timer:
-	game_sales_timer.connect("timeout",self.game_sales_timeout)
-	game_sales_timer.wait_time = (game_clock.GetBaseDay()*3)
-	game_sales_timer.one_shot = true
-	add_child(game_sales_timer)
+	_init_timers()
 	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	pass
 
+func _init_timers():
+	# Add Game Clock to main game loop:
+	game_timer.connect("timeout",self.game_clock_timeout)
+	game_timer.wait_time = game_clock.GetBaseDay()
+	game_timer.one_shot = true
+	add_child(game_timer)
+	
+	# Add Game Dev Timer Clock:
+	game_dev_timer1.connect("timeout",self._on_game_dev_timer1_timeout)
+	game_dev_timer1.wait_time = game_clock.GetBaseDay()
+	game_dev_timer1.one_shot = true
+	add_child(game_dev_timer1)
+	
+	# Add game sales timer:
+	game_sales_timer.connect("timeout",self.game_sales_timeout)
+	game_sales_timer.wait_time = game_clock.GetBaseDay()
+	game_sales_timer.one_shot = true
+	add_child(game_sales_timer)
+
 func game_sales_timeout():
-	GameSalesEvt = pC.GameSalesEvent.new(lastCreatedGame.get_key(),lastCreatedGame.gameSales)
-	GameSalesEvt.calcValue(1,1)
+	GameSalesEvt = pC.GameSalesEvent.new(lastCreatedGame.get_key(),lastCreatedGame.gameSales,game_clock.GameDays(),9.99) # TODO: Remove hardcoded GamePrice of $9.99
+	GameSalesEvt.calcValue(1,1) # TODO: Logic for calculating sales by.
 	lastCreatedGame.gameSales = GameSalesEvt.EventArray
 	print(lastCreatedGame.gameSales)
-	game_sales_timer.start()
+	if lastCreatedGame.gameSalesDays <= gameSalesMax:
+		lastCreatedGame.gameSalesDays += 1
+		game_sales_timer.start()
+	else:
+		game_sales_inprogress = false
+		_pause_game()
+		gsys.msgdialog("Place holder for game sales over \n Total Sales: "+str(lastCreatedGame.calc_gameSalesTot()),"Game Sales End Place Holder")
 	pass
 
 func game_clock_timeout():
@@ -134,6 +149,7 @@ func _save_player_data():
 	gs.PlayerData(playerData)
 	# Convert array of player game classes to dict of dicts:
 	gs.GameData(pC.playerGameClass.get_playerGamesDict(playerGames))
+	gs.Misc(GameRatings)
 	gs.WriteSaveGame()
 	
 
@@ -141,6 +157,7 @@ func _save_player_data():
 func _load_player_data():
 	if FileAccess.file_exists(indie_save_game):
 		gs.LoadSavedGame()
+		GameRatings = gs.Misc()
 		game_clock = gc.GameClock.from_dict(gs.Meta()) # loaded GameClock from meta
 		$GameLayer/GCIGameDaysValuelbl.text = str(game_clock.GameDays())
 		playerData = gs.PlayerData()
@@ -217,9 +234,28 @@ func _on_gdc_ok_btn_pressed():
 	$GameLayer/GameDevComplete/GameDevCompletePnl/GDCGameGenreLbl.text = "Genre:"
 	$GameLayer/GameDevComplete/GameDevCompletePnl/GDCGamePlatformLbl.text = "Platform:"
 	$GameLayer/GameDevComplete.visible = false
+	# TODO: Finalize better sync between timers, using game clock object instance.:
 	lastCreatedGame = playerGames[playerGames.size()-1]
+	print(lastCreatedGame.phaseXPused)
+	_rate_game()
+	_player_research()
+	game_timer.start()
+	game_running = true
 	game_sales_timer.start()
+	game_sales_inprogress = true
 
+func _rate_game():
+	var gre = pC.GameRatingsEvent.new(lastCreatedGame.get_key(),GameRatings.Ratings,game_clock.GameDays(),lastCreatedGame,playerData.RD) # TODO: Add agent, DEBUG default for now
+	var rate:float = gre.calcValue(1,1)
+	gsys.msgdialog("Game Rated By: "+gre.Agent+"\n\nRating of: "+str(rate),"Game Rating Place Holder")
+	GameRatings.Ratings = gre.EventArray
+
+func _player_research():
+	playerData.RD.topics.Space.XP = 30
+	playerData.RD.topics.Sports.XP = 80
+	var pr = pC.playerResearch.new(playerData)
+	pr.calcResearch(playerData)
+	playerData = pr.playerData 
 
 func _on_new_game_collect_info_visibility_changed():
 	if $GameLayer/NewGameCollectInfo.visible == true:
@@ -339,6 +375,12 @@ func _on_NewGameDev_complete():
 				gsys.msgdialog("You have leveled up your XP for: Testing","Leveled Up!")
 			# ***************************************
 			
+			var PhaseXPUsed:Dictionary = pC.gamePhaseXPUsed
+			PhaseXPUsed["design"] = cdesign_phase_points
+			PhaseXPUsed["development"] = cdev_phase_points
+			PhaseXPUsed["testing"] = ctest_phase_points
+			npc.phaseXPused = PhaseXPUsed
+			
 			# ********* calc total progress for now *****
 			# TODO: Move to each section having their own progress
 			# *******************************************
@@ -398,6 +440,7 @@ func _calc_PhaseXP_from_Points(v:int):
 	
 func _on_new_game_dev_visibility_changed():
 	if $GameLayer/NewGameDev.visible == true:
+		_load_gamedata_values()
 		$GameLayer/BackgroundTxtBtn.visible = false
 	else:
 		if $GameLayer/BackgroundTxtBtn.visible == false:
@@ -463,6 +506,8 @@ func _start_game():
 		game_timer.start()
 	if game_dev_inprogress && game_dev_timer1.is_stopped():
 		game_dev_timer1.start()
+	if game_sales_inprogress && game_sales_timer.is_stopped():
+		game_sales_timer.start()
 	game_running = true
 
 func _pause_game():
@@ -471,6 +516,8 @@ func _pause_game():
 			game_timer.stop()
 		if !game_dev_timer1.is_stopped():
 			game_dev_timer1.stop()
+		if !game_sales_timer.is_stopped():
+			game_sales_timer.stop()
 		#gsys.msgdialog("The game, and all activities \n have been paused. \nClick start to resume.","Game Paused")
 		game_running = false
 
