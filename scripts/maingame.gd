@@ -36,6 +36,9 @@ var CTestPhase = gdata.CurrentTestPhase
 # Ratings Objects:
 @onready var GameRatings:Dictionary = pC.playerGameRatings
 
+# Research Global Objects:
+@onready var CurrentResearch:Dictionary = gdata.ResearchData
+
 # Time Objects:
 @onready var game_clock = gc.GameClock.new()
 @onready var game_timer:Timer = Timer.new()
@@ -251,10 +254,11 @@ func _rate_game():
 	GameRatings.Ratings = gre.EventArray
 
 func _player_research():
-	playerData.RD.topics.Space.XP = 30
-	playerData.RD.topics.Sports.XP = 80
+	#playerData.RD.topics.Space.XP = 30
+	# update research points based on game creation options:
+	
 	var pr = pC.playerResearch.new(playerData)
-	pr.calcResearch(playerData)
+	pr.calcResearch()
 	playerData = pr.playerData 
 
 func _on_new_game_collect_info_visibility_changed():
@@ -772,8 +776,7 @@ func _on_bank_pressed():
 	gsys.msgdialog("place holder for game bank report.","place holder bank")
 	
 func _on_research_btn_pressed():
-	gsys.msgdialog("place holder for game research.","place holder research")
-
+	$GameLayer/Research.visible = true
 
 func _on_create_game_btn_pressed():
 	_create_new_game()
@@ -821,3 +824,80 @@ func _on_ngdtestp_back_btn_pressed():
 func _on_background_txt_btn_pressed():
 	gsys.msgdialog("Place holder for pop-up resources menu.","Background Resource Placeholder")
 	pass # Replace with function body.
+
+
+func _on_res_ok_btn_pressed():
+	$GameLayer/Research.visible = false
+	pass # Replace with function body.
+
+
+func _on_research_visibility_changed():
+	if $GameLayer/Research.visible == true:
+		var RD = pC.playerResearch.new(playerData)
+		RD.calcResearch()
+		playerData = RD.playerData
+		$GameLayer/Research/ResInfo/XPBankValuelbl.text = str(playerData.RD.XPBank.Balance)
+		$GameLayer/BackgroundTxtBtn.visible = false
+	else:
+		if $GameLayer/BackgroundTxtBtn.visible == false:
+			$GameLayer/BackgroundTxtBtn.visible = true
+	pass # Replace with function body.
+
+
+func _on_tab_bar_tab_changed(tab):
+	var taba:Array
+	taba.append($GameLayer/Research/ResInfo/Topics)
+	taba.append($GameLayer/Research/ResInfo/Genres)
+	taba.append($GameLayer/Research/ResInfo/Platforms)
+	taba.append($GameLayer/Research/ResInfo/Audiences)
+	taba.append($GameLayer/Research/ResInfo/Styles)
+	taba.append($GameLayer/Research/ResInfo/Sizes)
+	
+	taba[tab].visible = true
+	taba.pop_at(tab)
+	for t in taba:
+		t.visible = false
+
+
+func _on_topics_draw():
+	
+	$GameLayer/Research/ResInfo/Topics/TopicLvlXP.value = 0
+	var tree = $GameLayer/Research/ResInfo/Topics/TopicsTree
+	tree.clear()
+	tree.set_column_title(0,"Topics")
+	var root = tree.create_item()
+	tree.hide_root = true
+	for k in playerData.RD.topics.keys():
+		var child = tree.create_item(root)
+		child.set_text(0, k)
+	
+
+
+func _on_topics_tree_item_selected():
+	var RD = pC.playerResearch.new(playerData)
+	RD.calcResearch()
+	playerData = RD.playerData
+	var tree = $GameLayer/Research/ResInfo/Topics/TopicsTree
+	var ts = tree.get_selected()
+	$GameLayer/Research/ResInfo/Topics/TopicValuelbl.text = ts.get_text(0)
+	var td:Dictionary = playerData.RD.topics[ts.get_text(0)]
+	$GameLayer/Research/ResInfo/Topics/LevelValuelbl.text = str(td.level)
+	$GameLayer/Research/ResInfo/Topics/XPValuelbl.text = str(td.XP)
+	$GameLayer/Research/ResInfo/Topics/TopicLvlXP.max_value = td.XP + td.NextXP
+	$GameLayer/Research/ResInfo/Topics/TopicLvlXP.value = td.XP
+	$GameLayer/Research/ResInfo/Topics/NextXPValuelbl.text = str(td.NextXP)
+	CurrentResearch.type = "topics"
+	CurrentResearch.key = ts.get_text(0)
+	CurrentResearch.tab = $GameLayer/Research/ResInfo/Topics
+
+func _on_res_spend_btn_pressed():
+	var spend = int($GameLayer/Research/ResInfo/XP2SpendEdit.text)
+	if spend > 0:
+		CurrentResearch.value = spend
+		CurrentResearch.action = "update"
+		var RD = pC.playerResearch.new(playerData)
+		RD.addUpdateData(CurrentResearch.type,CurrentResearch.key,CurrentResearch.value)
+		RD.calcResearch()
+		playerData = RD.playerData
+		CurrentResearch.tab.visible = false
+		CurrentResearch.tab.visible = true

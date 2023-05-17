@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://chinfrxym514"]
+[gd_scene load_steps=24 format=3 uid="uid://chinfrxym514"]
 
 [ext_resource type="FontFile" uid="uid://bp17nvk3j288l" path="res://assets/fonts/1joystix.ttf" id="1_ts3ii"]
 [ext_resource type="Script" path="res://scripts/maingame.gd" id="1_uv0v1"]
@@ -6,12 +6,15 @@
 [ext_resource type="Theme" uid="uid://c0hnxfle6b2xb" path="res://scenes/themes/joytheme_20px_txt.tres" id="5_a0024"]
 [ext_resource type="Texture2D" uid="uid://db1t1g7tstnf5" path="res://assets/images/Empty_Computer_Desk.png" id="5_domng"]
 [ext_resource type="StyleBox" uid="uid://db6hsghjxok65" path="res://scenes/themes/phase_stylebox_a.tres" id="6_f2dyv"]
+[ext_resource type="Theme" uid="uid://blexf7fdbf2cb" path="res://scenes/themes/joytheme_20px_white_font.tres" id="6_osqr8"]
 [ext_resource type="Texture2D" uid="uid://buepwojusw0yr" path="res://assets/images/Platform_Desktop_a.png" id="7_oun2x"]
 [ext_resource type="Texture2D" uid="uid://crrca35e4lxv0" path="res://assets/images/Platform_Web_a.png" id="8_16ku3"]
 [ext_resource type="Texture2D" uid="uid://bhynywx0c0leb" path="res://assets/images/Platform_GameSystem_a.png" id="9_yn1qr"]
 [ext_resource type="Texture2D" uid="uid://cwdjv2hi6l1va" path="res://assets/images/Platform_Mobile_a.png" id="10_npye5"]
+[ext_resource type="Texture2D" uid="uid://bmu1hb0ef3ns4" path="res://assets/images/controller_a.png" id="11_huli2"]
 [ext_resource type="Texture2D" uid="uid://c2rdv8y3330j0" path="res://assets/images/Pause_Button.png" id="11_kqwv1"]
 [ext_resource type="Theme" uid="uid://cfeavt5iknpjn" path="res://scenes/themes/tool_tip_joystix.tres" id="11_xt8ss"]
+[ext_resource type="Texture2D" uid="uid://du6vg7xqlo8ee" path="res://assets/images/basic_controller.png" id="12_sknx7"]
 [ext_resource type="Texture2D" uid="uid://bru5fo6tvyng5" path="res://assets/images/Play_Arrow.png" id="12_u4com"]
 [ext_resource type="Texture2D" uid="uid://cvqn3itw8rtah" path="res://assets/images/Revenue_Report_Button.png" id="13_7y6m6"]
 [ext_resource type="Texture2D" uid="uid://btsk7drpbt3gj" path="res://assets/images/Bank_Button.png" id="14_83nss"]
@@ -41,10 +44,6 @@ border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(0.984314, 0.984314, 0.984314, 1)
-
-[sub_resource type="Theme" id="Theme_1w214"]
-default_font = ExtResource("1_ts3ii")
-default_font_size = 20
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2f145"]
 bg_color = Color(0.984314, 0.984314, 0.984314, 1)
@@ -175,7 +174,7 @@ offset_left = 46.0
 offset_top = 26.0
 offset_right = 555.0
 offset_bottom = 152.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 theme_override_font_sizes/font_size = 32
 text = "Start a new game, 
@@ -235,7 +234,7 @@ offset_left = 26.0
 offset_top = 46.0
 offset_right = 424.0
 offset_bottom = 73.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "Enter Your Company Name:"
 
@@ -253,7 +252,7 @@ offset_left = 26.0
 offset_top = 153.0
 offset_right = 424.0
 offset_bottom = 180.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "Enter Your First Name:"
 
@@ -271,7 +270,7 @@ offset_left = 26.0
 offset_top = 261.0
 offset_right = 424.0
 offset_bottom = 288.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "Enter Your Last Name:"
 
@@ -323,7 +322,7 @@ offset_left = 26.0
 offset_top = 46.0
 offset_right = 424.0
 offset_bottom = 73.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "Your Company Name:"
 
@@ -342,7 +341,7 @@ offset_left = 26.0
 offset_top = 153.0
 offset_right = 424.0
 offset_bottom = 180.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "Your First Name:"
 
@@ -361,7 +360,7 @@ offset_left = 26.0
 offset_top = 261.0
 offset_right = 424.0
 offset_bottom = 288.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "Your Last Name:"
 
@@ -414,7 +413,7 @@ offset_left = 27.0
 offset_top = 19.0
 offset_right = 442.0
 offset_bottom = 46.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "Game Tile:"
 
@@ -432,7 +431,7 @@ offset_left = 27.0
 offset_top = 106.0
 offset_right = 277.0
 offset_bottom = 133.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "Game Topic:"
 
@@ -451,7 +450,7 @@ offset_left = 323.0
 offset_top = 106.0
 offset_right = 573.0
 offset_bottom = 133.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "Game Genre:"
 
@@ -496,7 +495,7 @@ offset_left = 27.0
 offset_top = 24.0
 offset_right = 277.0
 offset_bottom = 51.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "Style:"
 
@@ -515,7 +514,7 @@ offset_left = 323.0
 offset_top = 24.0
 offset_right = 573.0
 offset_bottom = 51.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "Size:"
 
@@ -534,7 +533,7 @@ offset_left = 27.0
 offset_top = 208.0
 offset_right = 277.0
 offset_bottom = 235.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "Audience:"
 
@@ -553,7 +552,7 @@ offset_left = 323.0
 offset_top = 208.0
 offset_right = 573.0
 offset_bottom = 235.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "Platform:"
 
@@ -609,7 +608,7 @@ offset_left = 27.0
 offset_top = 24.0
 offset_right = 277.0
 offset_bottom = 51.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 theme_override_styles/normal = ExtResource("6_f2dyv")
 text = "Design Phase >"
@@ -620,7 +619,7 @@ offset_left = 308.0
 offset_top = 24.0
 offset_right = 558.0
 offset_bottom = 51.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.407843, 0.407843, 0.407843, 1)
 text = "Dev Phase >"
 
@@ -630,7 +629,7 @@ offset_left = 36.0
 offset_top = 93.0
 offset_right = 286.0
 offset_bottom = 120.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "Graphics:"
 
@@ -640,7 +639,7 @@ offset_left = 307.0
 offset_top = 93.0
 offset_right = 557.0
 offset_bottom = 120.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "0"
 horizontal_alignment = 2
@@ -659,7 +658,7 @@ offset_left = 36.0
 offset_top = 161.0
 offset_right = 286.0
 offset_bottom = 188.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "User interface:"
 
@@ -669,7 +668,7 @@ offset_left = 307.0
 offset_top = 161.0
 offset_right = 557.0
 offset_bottom = 188.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "0
 "
@@ -689,7 +688,7 @@ offset_left = 36.0
 offset_top = 227.0
 offset_right = 286.0
 offset_bottom = 254.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "Game Play:"
 
@@ -699,7 +698,7 @@ offset_left = 307.0
 offset_top = 227.0
 offset_right = 557.0
 offset_bottom = 254.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "0"
 horizontal_alignment = 2
@@ -718,7 +717,7 @@ offset_left = 36.0
 offset_top = 294.0
 offset_right = 286.0
 offset_bottom = 321.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "Audio/FX:"
 
@@ -728,7 +727,7 @@ offset_left = 307.0
 offset_top = 294.0
 offset_right = 557.0
 offset_bottom = 321.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "0"
 horizontal_alignment = 2
@@ -747,7 +746,7 @@ offset_left = 116.0
 offset_top = 400.0
 offset_right = 380.0
 offset_bottom = 427.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "Points of total:"
 
@@ -757,7 +756,7 @@ offset_left = 36.0
 offset_top = 400.0
 offset_right = 114.0
 offset_bottom = 427.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "0
 "
@@ -769,7 +768,7 @@ offset_left = 381.0
 offset_top = 400.0
 offset_right = 459.0
 offset_bottom = 427.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "0
 "
@@ -817,7 +816,7 @@ offset_left = 27.0
 offset_top = 24.0
 offset_right = 277.0
 offset_bottom = 51.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.407843, 0.407843, 0.407843, 1)
 text = "Design Phase >"
 
@@ -827,7 +826,7 @@ offset_left = 308.0
 offset_top = 24.0
 offset_right = 558.0
 offset_bottom = 51.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 theme_override_styles/normal = ExtResource("6_f2dyv")
 text = "Dev Phase >"
@@ -838,7 +837,7 @@ offset_left = 36.0
 offset_top = 93.0
 offset_right = 286.0
 offset_bottom = 120.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "Game Engine:"
 
@@ -848,7 +847,7 @@ offset_left = 307.0
 offset_top = 93.0
 offset_right = 557.0
 offset_bottom = 120.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "0"
 horizontal_alignment = 2
@@ -867,7 +866,7 @@ offset_left = 36.0
 offset_top = 161.0
 offset_right = 286.0
 offset_bottom = 188.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "AI:"
 
@@ -877,7 +876,7 @@ offset_left = 307.0
 offset_top = 161.0
 offset_right = 557.0
 offset_bottom = 188.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "0
 "
@@ -897,7 +896,7 @@ offset_left = 36.0
 offset_top = 227.0
 offset_right = 286.0
 offset_bottom = 254.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "Levels:"
 
@@ -907,7 +906,7 @@ offset_left = 307.0
 offset_top = 227.0
 offset_right = 557.0
 offset_bottom = 254.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "0"
 horizontal_alignment = 2
@@ -926,7 +925,7 @@ offset_left = 36.0
 offset_top = 294.0
 offset_right = 286.0
 offset_bottom = 321.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "Heads up display (hud):"
 
@@ -936,7 +935,7 @@ offset_left = 307.0
 offset_top = 294.0
 offset_right = 557.0
 offset_bottom = 321.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "0"
 horizontal_alignment = 2
@@ -955,7 +954,7 @@ offset_left = 116.0
 offset_top = 400.0
 offset_right = 380.0
 offset_bottom = 427.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "Points of total:"
 
@@ -965,7 +964,7 @@ offset_left = 36.0
 offset_top = 400.0
 offset_right = 114.0
 offset_bottom = 427.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "0
 "
@@ -977,7 +976,7 @@ offset_left = 381.0
 offset_top = 400.0
 offset_right = 459.0
 offset_bottom = 427.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "0
 "
@@ -1025,7 +1024,7 @@ offset_left = 27.0
 offset_top = 24.0
 offset_right = 277.0
 offset_bottom = 51.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 theme_override_styles/normal = ExtResource("6_f2dyv")
 text = "Test Phase >"
@@ -1036,7 +1035,7 @@ offset_left = 36.0
 offset_top = 93.0
 offset_right = 286.0
 offset_bottom = 120.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "Review:"
 
@@ -1046,7 +1045,7 @@ offset_left = 307.0
 offset_top = 93.0
 offset_right = 557.0
 offset_bottom = 120.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "0"
 horizontal_alignment = 2
@@ -1065,7 +1064,7 @@ offset_left = 36.0
 offset_top = 161.0
 offset_right = 286.0
 offset_bottom = 188.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "Bug Fix:"
 
@@ -1075,7 +1074,7 @@ offset_left = 307.0
 offset_top = 161.0
 offset_right = 557.0
 offset_bottom = 188.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "0
 "
@@ -1095,7 +1094,7 @@ offset_left = 36.0
 offset_top = 227.0
 offset_right = 286.0
 offset_bottom = 254.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "User Testing:"
 
@@ -1105,7 +1104,7 @@ offset_left = 307.0
 offset_top = 227.0
 offset_right = 557.0
 offset_bottom = 254.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "0"
 horizontal_alignment = 2
@@ -1124,7 +1123,7 @@ offset_left = 167.0
 offset_top = 400.0
 offset_right = 431.0
 offset_bottom = 427.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "Points of total:"
 
@@ -1134,7 +1133,7 @@ offset_left = 87.0
 offset_top = 400.0
 offset_right = 165.0
 offset_bottom = 427.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "0
 "
@@ -1146,7 +1145,7 @@ offset_left = 432.0
 offset_top = 400.0
 offset_right = 510.0
 offset_bottom = 427.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "0
 "
@@ -1214,7 +1213,7 @@ offset_left = 69.0
 offset_top = 31.0
 offset_right = 690.0
 offset_bottom = 80.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 theme_override_font_sizes/font_size = 38
 text = "Game Completed!"
@@ -1245,7 +1244,7 @@ offset_left = 8.0
 offset_top = 273.0
 offset_right = 588.0
 offset_bottom = 306.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 theme_override_font_sizes/font_size = 20
 text = "Title:"
@@ -1256,7 +1255,7 @@ offset_left = 8.0
 offset_top = 304.0
 offset_right = 588.0
 offset_bottom = 337.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 theme_override_font_sizes/font_size = 20
 text = "Topic:"
@@ -1267,7 +1266,7 @@ offset_left = 8.0
 offset_top = 334.0
 offset_right = 588.0
 offset_bottom = 367.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 theme_override_font_sizes/font_size = 20
 text = "Genre:"
@@ -1278,7 +1277,7 @@ offset_left = 8.0
 offset_top = 364.0
 offset_right = 588.0
 offset_bottom = 397.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 theme_override_font_sizes/font_size = 20
 text = "Platform:"
@@ -1312,7 +1311,7 @@ offset_left = 45.0
 offset_top = 19.0
 offset_right = 460.0
 offset_bottom = 46.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "Game Development Hisotry:"
 
@@ -1375,7 +1374,7 @@ offset_left = 45.0
 offset_top = 19.0
 offset_right = 460.0
 offset_bottom = 46.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "Game Development Hisotry:"
 
@@ -1390,12 +1389,347 @@ theme_override_colors/font_hover_color = Color(0.611765, 0.941176, 0.984314, 1)
 theme_override_colors/font_focus_color = Color(0.611765, 0.941176, 0.984314, 1)
 text = "ok"
 
+[node name="Research" type="Control" parent="GameLayer"]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ResInfo" type="Panel" parent="GameLayer/Research"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -529.0
+offset_top = -303.0
+offset_right = 532.0
+offset_bottom = 311.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ResInfoLbl" type="Label" parent="GameLayer/Research/ResInfo"]
+layout_mode = 2
+offset_left = 30.0
+offset_top = 19.0
+offset_right = 445.0
+offset_bottom = 46.0
+theme = ExtResource("6_osqr8")
+theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
+text = "Research:"
+
+[node name="TabBar" type="TabBar" parent="GameLayer/Research/ResInfo"]
+layout_mode = 0
+offset_left = 28.0
+offset_top = 56.0
+offset_right = 826.0
+offset_bottom = 96.0
+theme = ExtResource("5_a0024")
+clip_tabs = false
+tab_count = 6
+tab_0/title = "Topics"
+tab_1/title = "Genres"
+tab_2/title = "Platforms"
+tab_3/title = "Audiences"
+tab_4/title = "Styles"
+tab_5/title = "Sizes"
+
+[node name="Topics" type="Panel" parent="GameLayer/Research/ResInfo"]
+layout_mode = 0
+offset_left = 27.0
+offset_top = 98.0
+offset_right = 1029.0
+offset_bottom = 552.0
+
+[node name="TopicsTree" type="Tree" parent="GameLayer/Research/ResInfo/Topics"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 17.0
+offset_right = 519.0
+offset_bottom = 431.0
+theme = ExtResource("6_osqr8")
+column_titles_visible = true
+
+[node name="Topiclbl" type="Label" parent="GameLayer/Research/ResInfo/Topics"]
+offset_left = 538.0
+offset_top = 33.0
+offset_right = 721.0
+offset_bottom = 60.0
+theme = ExtResource("6_osqr8")
+theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
+text = "Game Topic:"
+
+[node name="TopicValuelbl" type="Label" parent="GameLayer/Research/ResInfo/Topics"]
+offset_left = 725.0
+offset_top = 33.0
+offset_right = 987.0
+offset_bottom = 60.0
+theme = ExtResource("6_osqr8")
+text = "<Topic>"
+
+[node name="Levellbl" type="Label" parent="GameLayer/Research/ResInfo/Topics"]
+offset_left = 538.0
+offset_top = 67.0
+offset_right = 721.0
+offset_bottom = 94.0
+theme = ExtResource("6_osqr8")
+theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
+text = "Level:"
+
+[node name="LevelValuelbl" type="Label" parent="GameLayer/Research/ResInfo/Topics"]
+offset_left = 725.0
+offset_top = 67.0
+offset_right = 987.0
+offset_bottom = 94.0
+theme = ExtResource("6_osqr8")
+text = "<Level>"
+
+[node name="XPlbl" type="Label" parent="GameLayer/Research/ResInfo/Topics"]
+offset_left = 538.0
+offset_top = 98.0
+offset_right = 721.0
+offset_bottom = 125.0
+theme = ExtResource("6_osqr8")
+theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
+text = "XP:"
+
+[node name="XPValuelbl" type="Label" parent="GameLayer/Research/ResInfo/Topics"]
+offset_left = 725.0
+offset_top = 98.0
+offset_right = 987.0
+offset_bottom = 125.0
+theme = ExtResource("6_osqr8")
+text = "<XP>"
+
+[node name="NextXPlbl" type="Label" parent="GameLayer/Research/ResInfo/Topics"]
+offset_left = 538.0
+offset_top = 295.0
+offset_right = 820.0
+offset_bottom = 322.0
+theme = ExtResource("6_osqr8")
+theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
+text = "XP to next level:"
+
+[node name="NextXPValuelbl" type="Label" parent="GameLayer/Research/ResInfo/Topics"]
+offset_left = 823.0
+offset_top = 295.0
+offset_right = 987.0
+offset_bottom = 322.0
+theme = ExtResource("6_osqr8")
+text = "<XP>"
+
+[node name="ToNxtLvllbl" type="Label" parent="GameLayer/Research/ResInfo/Topics"]
+offset_left = 752.0
+offset_top = 336.0
+offset_right = 984.0
+offset_bottom = 363.0
+theme = ExtResource("6_osqr8")
+theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
+text = ":To Next Level"
+
+[node name="TopicLvlXP" type="ProgressBar" parent="GameLayer/Research/ResInfo/Topics"]
+offset_left = 539.0
+offset_top = 333.0
+offset_right = 753.0
+offset_bottom = 363.0
+tooltip_text = "To Next Level
+"
+theme = ExtResource("5_a0024")
+theme_override_colors/font_color = Color(0.984314, 0.984314, 0.984314, 1)
+theme_override_styles/fill = SubResource("StyleBoxFlat_wamkx")
+step = 1.0
+
+[node name="Genres" type="Panel" parent="GameLayer/Research/ResInfo"]
+visible = false
+offset_left = 27.0
+offset_top = 98.0
+offset_right = 1029.0
+offset_bottom = 552.0
+
+[node name="GenreNode" type="GraphNode" parent="GameLayer/Research/ResInfo/Genres"]
+layout_mode = 0
+offset_left = 124.0
+offset_top = 105.0
+offset_right = 283.0
+offset_bottom = 268.0
+tooltip_text = "Basic Game Size"
+mouse_filter = 1
+theme = ExtResource("5_a0024")
+title = "Genre"
+position_offset = Vector2(-19, 132)
+draggable = false
+
+[node name="ControllerA" type="Sprite2D" parent="GameLayer/Research/ResInfo/Genres/GenreNode"]
+position = Vector2(77, 101)
+texture = ExtResource("11_huli2")
+
+[node name="Platforms" type="Panel" parent="GameLayer/Research/ResInfo"]
+visible = false
+offset_left = 27.0
+offset_top = 98.0
+offset_right = 1029.0
+offset_bottom = 552.0
+
+[node name="PlatformNode" type="GraphNode" parent="GameLayer/Research/ResInfo/Platforms"]
+layout_mode = 0
+offset_left = 197.0
+offset_top = 105.0
+offset_right = 365.0
+offset_bottom = 268.0
+tooltip_text = "Basic Game Size"
+mouse_filter = 1
+theme = ExtResource("5_a0024")
+title = "Platform"
+position_offset = Vector2(-19, 132)
+draggable = false
+
+[node name="ControllerA" type="Sprite2D" parent="GameLayer/Research/ResInfo/Platforms/PlatformNode"]
+position = Vector2(77, 101)
+texture = ExtResource("11_huli2")
+
+[node name="Audiences" type="Panel" parent="GameLayer/Research/ResInfo"]
+visible = false
+offset_left = 27.0
+offset_top = 98.0
+offset_right = 1029.0
+offset_bottom = 552.0
+
+[node name="AudienceNode" type="GraphNode" parent="GameLayer/Research/ResInfo/Audiences"]
+layout_mode = 0
+offset_left = 43.0
+offset_top = 105.0
+offset_right = 202.0
+offset_bottom = 268.0
+tooltip_text = "Basic Game Size"
+mouse_filter = 1
+theme = ExtResource("5_a0024")
+title = "Audience"
+position_offset = Vector2(-19, 132)
+draggable = false
+
+[node name="ControllerA" type="Sprite2D" parent="GameLayer/Research/ResInfo/Audiences/AudienceNode"]
+position = Vector2(77, 101)
+texture = ExtResource("11_huli2")
+
+[node name="Styles" type="Panel" parent="GameLayer/Research/ResInfo"]
+visible = false
+offset_left = 27.0
+offset_top = 98.0
+offset_right = 1029.0
+offset_bottom = 552.0
+
+[node name="StyleNode" type="GraphNode" parent="GameLayer/Research/ResInfo/Styles"]
+layout_mode = 0
+offset_left = 43.0
+offset_top = 105.0
+offset_right = 202.0
+offset_bottom = 268.0
+tooltip_text = "Basic Game Size"
+mouse_filter = 1
+theme = ExtResource("5_a0024")
+title = "Style"
+position_offset = Vector2(-19, 132)
+draggable = false
+
+[node name="ControllerA" type="Sprite2D" parent="GameLayer/Research/ResInfo/Styles/StyleNode"]
+position = Vector2(77, 101)
+texture = ExtResource("11_huli2")
+
+[node name="Sizes" type="Panel" parent="GameLayer/Research/ResInfo"]
+visible = false
+offset_left = 27.0
+offset_top = 98.0
+offset_right = 1029.0
+offset_bottom = 552.0
+
+[node name="SizeNode" type="GraphNode" parent="GameLayer/Research/ResInfo/Sizes"]
+layout_mode = 0
+offset_left = 43.0
+offset_top = 105.0
+offset_right = 202.0
+offset_bottom = 268.0
+tooltip_text = "Basic Game Size"
+mouse_filter = 1
+theme = ExtResource("5_a0024")
+title = "Size"
+position_offset = Vector2(-19, 132)
+draggable = false
+
+[node name="ControllerA" type="Sprite2D" parent="GameLayer/Research/ResInfo/Sizes/SizeNode"]
+position = Vector2(77, 101)
+texture = ExtResource("11_huli2")
+
+[node name="XPBanklbl" type="Label" parent="GameLayer/Research/ResInfo"]
+offset_left = 204.0
+offset_top = 570.0
+offset_right = 349.0
+offset_bottom = 597.0
+theme = ExtResource("6_osqr8")
+theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
+text = "XP BANK:"
+
+[node name="XPBankValuelbl" type="Label" parent="GameLayer/Research/ResInfo"]
+offset_left = 337.0
+offset_top = 570.0
+offset_right = 463.0
+offset_bottom = 597.0
+theme = ExtResource("6_osqr8")
+text = "<XP>"
+
+[node name="XP2Spendlbl" type="Label" parent="GameLayer/Research/ResInfo"]
+offset_left = 467.0
+offset_top = 570.0
+offset_right = 666.0
+offset_bottom = 597.0
+theme = ExtResource("6_osqr8")
+theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
+text = "XP to spend:"
+
+[node name="XP2SpendEdit" type="LineEdit" parent="GameLayer/Research/ResInfo"]
+layout_mode = 0
+offset_left = 668.0
+offset_top = 567.0
+offset_right = 742.25
+offset_bottom = 599.0
+theme = ExtResource("6_osqr8")
+text = "0"
+
+[node name="ResSpendBtn" type="Button" parent="GameLayer/Research/ResInfo"]
+offset_left = 834.0
+offset_top = 565.0
+offset_right = 925.0
+offset_bottom = 597.0
+theme = ExtResource("5_a0024")
+theme_override_colors/font_hover_color = Color(0.611765, 0.941176, 0.984314, 1)
+theme_override_colors/font_focus_color = Color(0.611765, 0.941176, 0.984314, 1)
+text = "Spend"
+
+[node name="ResCloseBtn" type="Button" parent="GameLayer/Research/ResInfo"]
+layout_mode = 0
+offset_left = 939.0
+offset_top = 565.0
+offset_right = 1030.0
+offset_bottom = 597.0
+theme = ExtResource("5_a0024")
+theme_override_colors/font_hover_color = Color(0.611765, 0.941176, 0.984314, 1)
+theme_override_colors/font_focus_color = Color(0.611765, 0.941176, 0.984314, 1)
+text = "Close"
+
+[node name="BasicController" type="Sprite2D" parent="GameLayer/Research"]
+position = Vector2(854.75, 400.25)
+scale = Vector2(1.21484, 1.20703)
+texture = ExtResource("12_sknx7")
+
 [node name="GCIGameDayslbl" type="Label" parent="GameLayer"]
 offset_left = 291.0
 offset_top = 13.0
 offset_right = 457.0
 offset_bottom = 40.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.984314, 0.984314, 0.984314, 1)
 text = "Game Days:"
 
@@ -1404,7 +1738,7 @@ offset_left = 463.0
 offset_top = 12.0
 offset_right = 546.0
 offset_bottom = 39.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.984314, 0.984314, 0.984314, 1)
 text = "0"
 
@@ -1414,7 +1748,7 @@ offset_left = 932.0
 offset_top = 638.0
 offset_right = 1113.0
 offset_bottom = 665.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.984314, 0.984314, 0.984314, 1)
 text = "Multiplier:"
 
@@ -1424,7 +1758,7 @@ offset_left = 932.0
 offset_top = 668.0
 offset_right = 1098.0
 offset_bottom = 695.0
-theme = SubResource("Theme_1w214")
+theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.984314, 0.984314, 0.984314, 1)
 text = "1x"
 
@@ -1541,6 +1875,12 @@ stretch_mode = 0
 [connection signal="pressed" from="GameLayer/GameDevHistory/HistoryInfo/GDHExitBtn" to="." method="_on_gdh_exit_btn_pressed"]
 [connection signal="draw" from="GameLayer/GameDevHistoryDetails" to="." method="_on_game_dev_history_details_draw"]
 [connection signal="pressed" from="GameLayer/GameDevHistoryDetails/HistoryInfo/GDHOkBtn" to="." method="_on_gdhd_ok_btn_pressed"]
+[connection signal="visibility_changed" from="GameLayer/Research" to="." method="_on_research_visibility_changed"]
+[connection signal="tab_changed" from="GameLayer/Research/ResInfo/TabBar" to="." method="_on_tab_bar_tab_changed"]
+[connection signal="draw" from="GameLayer/Research/ResInfo/Topics" to="." method="_on_topics_draw"]
+[connection signal="item_selected" from="GameLayer/Research/ResInfo/Topics/TopicsTree" to="." method="_on_topics_tree_item_selected"]
+[connection signal="pressed" from="GameLayer/Research/ResInfo/ResSpendBtn" to="." method="_on_res_spend_btn_pressed"]
+[connection signal="pressed" from="GameLayer/Research/ResInfo/ResCloseBtn" to="." method="_on_res_ok_btn_pressed"]
 [connection signal="value_changed" from="GameLayer/GCITimeMultiplyhs" to="." method="_on_gci_time_multiplyhs_value_changed"]
 [connection signal="pressed" from="GameLayer/PauseBtn" to="." method="_on_gc_pausebtn_pressed"]
 [connection signal="pressed" from="GameLayer/StartBtn" to="." method="_on_gc_startbtn_pressed"]

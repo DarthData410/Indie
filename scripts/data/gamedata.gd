@@ -1,5 +1,6 @@
 # this file contains game data used with different parts of the game:
 
+
 var NewGameDataOptions:Dictionary = {
 	topics=[
 		"Space",
@@ -116,6 +117,14 @@ var GamePhaseData:Dictionary = {
 		"AbandonWare"
 	]
 }	
+
+var ResearchData:Dictionary = {
+	type = "",
+	key = "", # playerData.RD.[key]
+	action = "", # update or new
+	value = 0, # XP to spend on type, for action
+	tab = ""
+}
 
 enum GamePhases {
 	design = 0,

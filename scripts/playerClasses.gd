@@ -1,6 +1,7 @@
 # This file contains the main player classes used to support game play (basically game engine)
 # Starting playerData, with initial phaseXP levels 10, increases by
 
+
 enum phasePoints {
 	Basic = 25,
 	Exp = 30,
@@ -39,79 +40,98 @@ var playerData : Dictionary = {
 		topics = {
 			Space = {
 				level = 1,
-				XP = 10
+				XP = 10,
+				NextXP = 10
 			},
 			Fantasy = {
 				level = 1,
-				XP = 10
+				XP = 10,
+				NextXP = 10
 			},
 			Sports = {
 				level = 1,
-				XP = 10
+				XP = 10,
+				NextXP = 10
 			},
 			Racing = {
 				level = 1,
-				XP = 10
+				XP = 10,
+				NextXP = 10
 			}
 		},
 		genres = {
 			Action = {
 				level = 1,
-				XP = 10
+				XP = 10,
+				NextXP = 10
 			},
 			Adventure = {
 				level = 1,
-				XP = 10
+				XP = 10,
+				NextXP = 10
 			},
 			Platformer = {
 				level = 1,
-				XP = 10
+				XP = 10,
+				NextXP = 10
 			}
 		},
 		platforms = {
 			Mindows = {
 				level = 1,
-				XP = 10
+				XP = 10,
+				NextXP = 10
 			},
 			PearOS = {
 				level = 1,
-				XP = 10
+				XP = 10,
+				NextXP = 10
 			},
 			Linx = {
 				level = 1,
-				XP = 10
+				XP = 10,
+				NextXP = 10
 			}
 		},
 		audiences = {
 			Everyone = {
 				level = 1,
-				XP = 10
+				XP = 10,
+				NextXP = 10
 			}
 		},
 		styles = {
 			TwoD = {
 				level = 1,
 				XP = 10,
-				label = "2d"
+				label = "2d",
+				NextXP = 10
 			}
 		},
 		sizes = {
 			FirstGame = {
 				level = 1,
-				XP = 10
+				XP = 10,
+				NextXP = 10
 			}
 		},
 		publishing = {
 			PaidFor = {
 				level = 1,
 				XP = 10,
-				label = "Paid For"
+				label = "Paid For",
+				NextXP = 10
 			},
 			FreeInGameAds = {
 				level = 1,
 				XP = 10,
-				label = "Free|In-Game Ads"
+				label = "Free|In-Game Ads",
+				NextXP = 10
 			}
+		},
+		XPBank = {
+			Balance = 10,
+			Spent = 0
 		}
 	},
 	game_id = 0,
@@ -285,29 +305,102 @@ class playerGameClass:
 
 class playerResearch:
 	var playerData:Dictionary
+	var newData:Array
+	var updateData:Array
+	var _toNxt:int = 0
 	func _init(d:Dictionary):
 		self.playerData = d
-	func _calcTopics():
+	func _calcBaseXP(xp) -> int:
+		var ret:int = 0
+		if xp >= 20 and xp < 50:
+			ret = 2
+			self._toNxt = 50 - xp
+		elif xp >= 50 and xp < 80:
+			ret = 3
+			self._toNxt = 80 - xp
+		elif xp >= 80 and xp < 120:
+			ret = 4
+			self._toNxt = 120 - xp
+		elif xp >= 120 and xp < 170:
+			ret = 5
+			self._toNxt = 170 - xp
+		elif xp >= 170:
+			ret = 6
+		else:
+			ret = 1
+			self._toNxt = 20 - xp
+		return ret
+	func _calcType(t:String):
 		var xp:int=0
 		var lvl:int=1
-		for k in self.playerData.RD.topics.keys():
-			xp = int(self.playerData.RD.topics[k]["XP"])
-			if xp >= 20 and xp < 50:
-				lvl = 2
-			elif xp >= 50 and xp < 80:
-				lvl = 3
-			elif xp >= 80 and xp < 120:
-				lvl = 4
-			elif xp >= 120 and xp < 170:
-				lvl = 5
-			elif xp >= 170:
-				lvl = 6
-			else:
-				lvl = 1
-			self.playerData.RD.topics[k]["level"] = lvl
-	func calcResearch(d:Dictionary):
-		self.playerData = d
-		self._calcTopics()
+		for k in self.playerData.RD[t].keys():
+			xp = int(self.playerData.RD[t][k]["XP"])
+			lvl = self._calcBaseXP(xp)
+			self.playerData.RD[t][k]["level"] = lvl
+			self.playerData.RD[t][k]["NextXP"] = self._toNxt
+	func _checkType(t:String,v:String) -> bool:
+		var ret:bool = true
+		for k in self.playerData.RD[t].keys():
+			if v == k:
+				ret = false
+				break
+		return ret
+	func _newType(t:String):
+		var gdata = load("res://scripts/data/gamedata.gd").new()
+		var ngdo:Dictionary = gdata.NewGameDataOptions
+		var i:int = 0
+		var a:Array
+		for v in ngdo[t]:
+			if self._checkType(t,v):
+				a.append(v)
+				i += 1
+		var ri:int = randi_range(0,(i-1))
+		var nt:String = a[ri]
+		var RDt:Dictionary = self.playerData.RD[t]
+		RDt.keys().append(nt)
+		RDt[nt] = {
+			level = 1,
+			XP = 10,
+			NextXP = 10
+		}
+		self.playerData.RD[t] = RDt
+	func _updateXPBank(v:int):
+		var RDB:Dictionary = self.playerData.RD.XPBank
+		var b:int = int(RDB.Balance)
+		b = b - v
+		var s:int = int(RDB.Spent)
+		s = s + v
+		RDB.Balance = b
+		RDB.Spent = s
+		self.playerData.RD.XPBank = RDB
+	func _updateType(t:String,tv:String,v:int):
+		var RDt:Dictionary = self.playerData.RD[t]
+		var cxp:int = int(RDt[tv]["XP"])
+		cxp = cxp + v
+		RDt[tv]["XP"] = cxp
+		self.playerData.RD[t] = RDt
+		self._updateXPBank(v)
+	func _calcTypeUpdates():
+		self._calcType("topics")
+		self._calcType("genres")
+		self._calcType("platforms")
+		self._calcType("audiences")
+		self._calcType("styles")
+		self._calcType("sizes")
+		self._calcType("publishing")
+	func addNewData(nt:String):
+		self.newData.append(nt)
+	func addUpdateData(upt:String,uptc:String,upv:int):
+		var la:Array = [[upt,uptc,upv]]
+		self.updateData.append_array(la)
+	func calcResearch():
+		# Update XPBank balance per spend direction:
+		for v in self.newData:
+			self._newType(v)
+		for vu in self.updateData:
+			self._updateType(vu[0],vu[1],vu[2])
+		# Update Research Types for playerData:
+		self._calcTypeUpdates()
 
 enum gameEvents {
 	DEBUG = 0,
@@ -341,7 +434,6 @@ class GameRatingAgent:
 			self.Rate = base*randf_range(0.95,1.15)
 		self.Rate = self.Rate+bump
 	
-
 class GameRatingsEvent extends gameEvent:
 	var Agent:String
 	var go:playerGameClass
