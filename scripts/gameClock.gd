@@ -20,10 +20,18 @@ class GameClock:
 	var _current_game_timer_wait_percent:float = 1
 	var _current_game_timer_wait:float = 0.5
 	var _baseDay:float = 0.5 # representing 500 ms = 1 in-game day
+	var _monthCheck:int = 0
 	func _init():
 		pass
 	func GetBaseDay() -> float:
 		return _baseDay
+	func CheckMonth() -> bool:
+		var ret:bool = false
+		self._monthCheck += 1
+		if self._monthCheck >= 30:
+			ret = true
+			self._monthCheck = 1
+		return ret
 	func SetWaitTime(v:int):
 		self._baseTime = v
 	func GetWaitTime() -> int:

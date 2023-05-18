@@ -123,7 +123,9 @@ var ResearchData:Dictionary = {
 	key = "", # playerData.RD.[key]
 	action = "", # update or new
 	value = 0, # XP to spend on type, for action
-	tab = ""
+	tab = "", # current tab object on
+	tree = "", # current tree object, within current tab
+	treeitem = "" # currently selected item object, from tree, from tab
 }
 
 enum GamePhases {
@@ -166,4 +168,19 @@ var CurrentTestPhase:Dictionary = {
 var CurrentPointsOfTot:Dictionary = {
 	points = 0,
 	total = 0
+}
+
+var MetaWrapper:Dictionary = {
+	Version = {
+		Major = 0,
+		Minor = 1,
+		Build = 1
+	},
+	Saved = {
+		Date = Time.get_date_string_from_system()
+	}
+}
+
+var MiscWrapper:Dictionary = {
+	Objects = []
 }

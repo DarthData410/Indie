@@ -7,6 +7,9 @@ var gc = load("res://scripts/gameClock.gd").new()
 var gsave = load("res://scripts/save_system/gamesave.gd").new()
 var gdata = load("res://scripts/data/gamedata.gd").new()
 
+var MetaWrapper = gdata.MetaWrapper
+var MiscWrapper = gdata.MiscWrapper
+
 # GaveSave vars:
 @onready var indie_save_game = "user://indie_game_data.save"
 @onready var gs = gsave.GameSave.new(indie_save_game)
@@ -56,8 +59,8 @@ func _ready():
 	mmenu_popup.connect("index_pressed",self._on_main_menu_index_pressed)
 	resmenu_popup.connect("index_pressed",self._on_resmenu_index_pressed)
 	_init_timers()
+	_research_create_all()
 	
-
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	pass
@@ -92,12 +95,29 @@ func game_sales_timeout():
 	else:
 		game_sales_inprogress = false
 		_pause_game()
+		# TODO: Finalize updates for end of sales to bank. This will add total and end of timer
+		# Should this be a daily, weekly, monthly sales? Monthly dev for now:
+		var bank = pC.playerBank.new(playerData)
+		bank.addEntry("Credits","Game Sales: "+lastCreatedGame.title,game_clock.GameDays(),lastCreatedGame.calc_gameSalesTot())
+		playerData = bank.playerData
+		_update_bank_details()
 		gsys.msgdialog("Place holder for game sales over \n Total Sales: "+str(lastCreatedGame.calc_gameSalesTot()),"Game Sales End Place Holder")
 	pass
+
+func create_monthly_debits():
+	var bank = pC.playerBank.new(playerData)
+	bank.addEntry("Debits","Monthly Debits",game_clock.GameDays(),150.00)
+	playerData = bank.playerData
+	_update_bank_details()
 
 func game_clock_timeout():
 	var i:int = game_clock.Iterations()
 	i += 1
+	if game_clock.CheckMonth():
+		# fire month based events:
+		create_monthly_debits()
+		
+	# Finalie updates for game_clock	
 	game_clock.SetIterations(i)
 	game_clock.SetElaspedMS()
 	game_clock.CalcGameDays()
@@ -148,11 +168,16 @@ func _on_main_menu_index_pressed(index):
 
 
 func _save_player_data():
-	gs.Meta(game_clock.to_dict()) # using meta section to save game clock state
+	MetaWrapper.Saved = Time.get_date_string_from_system()
+	#gs.Meta(game_clock.to_dict()) # using meta section to save game clock state
+	gs.Meta(MetaWrapper)
 	gs.PlayerData(playerData)
 	# Convert array of player game classes to dict of dicts:
 	gs.GameData(pC.playerGameClass.get_playerGamesDict(playerGames))
-	gs.Misc(GameRatings)
+	MiscWrapper.Objects.append(game_clock.to_dict())
+	MiscWrapper.Objects.append(GameRatings)
+	gs.Misc(MiscWrapper)
+	#gs.Misc(GameRatings)
 	gs.WriteSaveGame()
 	
 
@@ -160,8 +185,10 @@ func _save_player_data():
 func _load_player_data():
 	if FileAccess.file_exists(indie_save_game):
 		gs.LoadSavedGame()
-		GameRatings = gs.Misc()
-		game_clock = gc.GameClock.from_dict(gs.Meta()) # loaded GameClock from meta
+		#GameRatings = gs.Misc()
+		MiscWrapper = gs.Misc()
+		game_clock = gc.GameClock.from_dict(MiscWrapper.Objects[0]) # loaded GameClock from meta
+		GameRatings = MiscWrapper.Objects[1]
 		$GameLayer/GCIGameDaysValuelbl.text = str(game_clock.GameDays())
 		playerData = gs.PlayerData()
 		var gameData = gs.GameData()
@@ -246,6 +273,17 @@ func _on_gdc_ok_btn_pressed():
 	game_running = true
 	game_sales_timer.start()
 	game_sales_inprogress = true
+	# TODO: Finalize XPBank Balance increase, using events. For now coded on Game Dev Complete
+	# for adding 80 when a game is done.
+	_update_RDXPBank()
+
+func _update_RDXPBank():
+	var xpb:int = int(playerData.RD.XPBank.Balance)
+	xpb += 80
+	playerData.RD.XPBank.Balance = xpb
+	var RD = pC.playerResearch.new(playerData)
+	RD.calcResearch()
+	playerData = RD.playerData
 
 func _rate_game():
 	var gre = pC.GameRatingsEvent.new(lastCreatedGame.get_key(),GameRatings.Ratings,game_clock.GameDays(),lastCreatedGame,playerData.RD) # TODO: Add agent, DEBUG default for now
@@ -559,6 +597,8 @@ func _load_gamedata_values():
 	for k in playerData.RD.platforms.keys():
 		nv = k+" - Level: " + str(playerData.RD.platforms[k]["level"])
 		$GameLayer/NewGameDev/NGDInfo2/NGDPlatformList.add_item(nv)
+	### BANK LOAD ###
+	_update_bank_details()
 
 # ********** DESIGN PHASE UI ********************************************
 func _on_h_slide_graphics_value_changed(value):
@@ -773,7 +813,7 @@ func _on_revenue_pressed():
 	gsys.msgdialog("place holder for game revenue report.","place holder revenue")
 
 func _on_bank_pressed():
-	gsys.msgdialog("place holder for game bank report.","place holder bank")
+	$GameLayer/Bank.visible = true
 	
 func _on_research_btn_pressed():
 	$GameLayer/Research.visible = true
@@ -860,8 +900,9 @@ func _on_tab_bar_tab_changed(tab):
 
 
 func _on_topics_draw():
-	
-	$GameLayer/Research/ResInfo/Topics/TopicLvlXP.value = 0
+	pass
+
+func _research_create_topics():
 	var tree = $GameLayer/Research/ResInfo/Topics/TopicsTree
 	tree.clear()
 	tree.set_column_title(0,"Topics")
@@ -870,34 +911,109 @@ func _on_topics_draw():
 	for k in playerData.RD.topics.keys():
 		var child = tree.create_item(root)
 		child.set_text(0, k)
-	
-
+		
+func _research_create_all():
+	_research_create_topics()
 
 func _on_topics_tree_item_selected():
-	var RD = pC.playerResearch.new(playerData)
-	RD.calcResearch()
-	playerData = RD.playerData
+	$GameLayer/Research/ResInfo/Topics/TopicDets.visible = true
+	#var RD = pC.playerResearch.new(playerData)
+	#RD.calcResearch()
+	#playerData = RD.playerData
 	var tree = $GameLayer/Research/ResInfo/Topics/TopicsTree
 	var ts = tree.get_selected()
-	$GameLayer/Research/ResInfo/Topics/TopicValuelbl.text = ts.get_text(0)
+	$GameLayer/Research/ResInfo/Topics/TopicDets/TopicValuelbl.text = ts.get_text(0)
 	var td:Dictionary = playerData.RD.topics[ts.get_text(0)]
-	$GameLayer/Research/ResInfo/Topics/LevelValuelbl.text = str(td.level)
-	$GameLayer/Research/ResInfo/Topics/XPValuelbl.text = str(td.XP)
-	$GameLayer/Research/ResInfo/Topics/TopicLvlXP.max_value = td.XP + td.NextXP
-	$GameLayer/Research/ResInfo/Topics/TopicLvlXP.value = td.XP
-	$GameLayer/Research/ResInfo/Topics/NextXPValuelbl.text = str(td.NextXP)
+	$GameLayer/Research/ResInfo/Topics/TopicDets/LevelValuelbl.text = str(td.level)
+	$GameLayer/Research/ResInfo/Topics/TopicDets/XPValuelbl.text = str(td.XP)
+	$GameLayer/Research/ResInfo/Topics/TopicDets/TopicLvlXP.max_value = td.XP + td.NextXP
+	$GameLayer/Research/ResInfo/Topics/TopicDets/TopicLvlXP.value = td.XP
+	$GameLayer/Research/ResInfo/Topics/TopicDets/NextXPValuelbl.text = str(td.NextXP)
+	# Used to load the CurrentResearch selected for spend, and refresh UI needs:
 	CurrentResearch.type = "topics"
 	CurrentResearch.key = ts.get_text(0)
 	CurrentResearch.tab = $GameLayer/Research/ResInfo/Topics
+	CurrentResearch.tree = $GameLayer/Research/ResInfo/Topics/TopicsTree
+	CurrentResearch.treeitem = ts
+
+func _research_update_all():
+	# general:
+	$GameLayer/Research/ResInfo/XP2SpendEdit.text = str(0)
+	# topics:
+	_on_topics_tree_item_selected()
 
 func _on_res_spend_btn_pressed():
 	var spend = int($GameLayer/Research/ResInfo/XP2SpendEdit.text)
 	if spend > 0:
-		CurrentResearch.value = spend
-		CurrentResearch.action = "update"
-		var RD = pC.playerResearch.new(playerData)
-		RD.addUpdateData(CurrentResearch.type,CurrentResearch.key,CurrentResearch.value)
-		RD.calcResearch()
-		playerData = RD.playerData
-		CurrentResearch.tab.visible = false
-		CurrentResearch.tab.visible = true
+		if spend <= int(playerData.RD.XPBank.Balance):
+			CurrentResearch.value = spend
+			CurrentResearch.action = "update"
+			var RD = pC.playerResearch.new(playerData)
+			RD.addUpdateData(CurrentResearch.type,CurrentResearch.key,CurrentResearch.value)
+			RD.calcResearch()
+			playerData = RD.playerData
+			$GameLayer/Research/ResInfo/XPBankValuelbl.text = str(playerData.RD.XPBank.Balance)
+			var tree = CurrentResearch.tree
+			tree.set_selected(CurrentResearch.treeitem,0)
+			_research_update_all()
+		else:
+			gsys.msgdialog("You do not have enough XP in your bank balanc. \nPlease update and then try again.","Not Enough XP in the Bank")
+	else:
+		gsys.msgdialog("Can't spend a 0 value XP. \nDid you click spend by mistake?","Zero Spend Amount")
+
+
+func _on_ng_cancel_btn_pressed():
+	$GameLayer/NewGameDev.visible = false
+	
+
+func _update_bank_details():
+	$GameLayer/Bank/BankInfo/CurrBalanceValuelbl.text = "$ " + str(playerData.Bank.Balance)
+	
+
+func _on_bank_visibility_changed():
+	if $GameLayer/Bank.visible == true:
+		$GameLayer/BackgroundTxtBtn.visible = false
+		_update_bank_base_linegraph()
+	else:
+		if $GameLayer/BackgroundTxtBtn.visible == false:
+			$GameLayer/BackgroundTxtBtn.visible = true
+
+func _update_bank_base_linegraph():
+	# TODO: Add as a script that extends TextureButton to add members
+	# for setting what the node button is. This could then be part of 
+	# Array of buttons from a larger class/script file that extends from
+	# Line2D, which is the used to build the initial credit/debits:
+	# **************
+	# for now just one active button for modeling purposes.
+	
+	var lg2d:Line2D = Line2D.new()
+	lg2d.position.x = 44
+	lg2d.position.y = 300
+	lg2d.add_point(Vector2(1,1)) # 10000.00
+	lg2d.add_point(Vector2(120,180)) # 10100.00
+	lg2d.add_point(Vector2(220,190)) # 10050.00
+	lg2d.add_point(Vector2(320,120)) # 10500.00
+	lg2d.add_point(Vector2(420,80)) # 10700.00
+	lg2d.add_point(Vector2(520,-40)) # 11500.00
+	var clr:Color = Color.GREEN
+	lg2d.default_color = clr
+	$GameLayer/Bank/BankInfo.add_child(lg2d)
+	
+	var p1btn = $GameLayer/Bank/BankInfo/pointbtn.duplicate()
+	var p1btnv:Vector2 = lg2d.points[0]
+	p1btnv.x += lg2d.position.x - (p1btn.size.x/2)
+	p1btnv.y += lg2d.position.y - (p1btn.size.y/2)
+	p1btn.position = p1btnv
+	p1btn.visible = true
+	p1btn.connect("pressed",_line_graph_node_btn_pressed)
+	
+	$GameLayer/Bank/BankInfo.add_child(p1btn)
+	#var l2d:Line2D = Line2D.new()
+	#l2d.draw_dashed_line(Vector2())
+	#lg2d.draw_line(lgsv,lgev,clr)
+
+func _line_graph_node_btn_pressed():
+	gsys.msgdialog("This is a place holder for graph node texture buttons to launch into detials.","Place Holder - Modeling Graph Node Btns")
+
+func _on_bank_close_btn_pressed():
+	$GameLayer/Bank.visible = false

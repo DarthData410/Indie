@@ -40,99 +40,119 @@ var playerData : Dictionary = {
 		topics = {
 			Space = {
 				level = 1,
-				XP = 10,
-				NextXP = 10
+				PreviousXP = 0,
+				XP = 0,
+				NextXP = 20
 			},
 			Fantasy = {
 				level = 1,
-				XP = 10,
-				NextXP = 10
+				PreviousXP = 0,
+				XP = 0,
+				NextXP = 20
 			},
 			Sports = {
 				level = 1,
-				XP = 10,
-				NextXP = 10
+				PreviousXP = 0,
+				XP = 0,
+				NextXP = 20
 			},
 			Racing = {
 				level = 1,
-				XP = 10,
-				NextXP = 10
+				PreviousXP = 0,
+				XP = 0,
+				NextXP = 20
 			}
 		},
 		genres = {
 			Action = {
 				level = 1,
-				XP = 10,
-				NextXP = 10
+				PreviousXP = 0,
+				XP = 0,
+				NextXP = 20
 			},
 			Adventure = {
 				level = 1,
-				XP = 10,
-				NextXP = 10
+				PreviousXP = 0,
+				XP = 0,
+				NextXP = 20
 			},
 			Platformer = {
 				level = 1,
-				XP = 10,
-				NextXP = 10
+				PreviousXP = 0,
+				XP = 0,
+				NextXP = 20
 			}
 		},
 		platforms = {
 			Mindows = {
 				level = 1,
-				XP = 10,
-				NextXP = 10
+				PreviousXP = 0,
+				XP = 0,
+				NextXP = 20
 			},
 			PearOS = {
 				level = 1,
-				XP = 10,
-				NextXP = 10
+				PreviousXP = 0,
+				XP = 0,
+				NextXP = 20
 			},
 			Linx = {
 				level = 1,
-				XP = 10,
-				NextXP = 10
+				PreviousXP = 0,
+				XP = 0,
+				NextXP = 20
 			}
 		},
 		audiences = {
 			Everyone = {
 				level = 1,
-				XP = 10,
-				NextXP = 10
+				PreviousXP = 0,
+				XP = 0,
+				NextXP = 20
 			}
 		},
 		styles = {
 			TwoD = {
 				level = 1,
-				XP = 10,
+				PreviousXP = 0,
+				XP = 0,
 				label = "2d",
-				NextXP = 10
+				NextXP = 20
 			}
 		},
 		sizes = {
 			FirstGame = {
 				level = 1,
-				XP = 10,
-				NextXP = 10
+				PreviousXP = 0,
+				XP = 0,
+				NextXP = 20
 			}
 		},
 		publishing = {
 			PaidFor = {
 				level = 1,
-				XP = 10,
+				PreviousXP = 0,
+				XP = 0,
 				label = "Paid For",
-				NextXP = 10
+				NextXP = 20
 			},
 			FreeInGameAds = {
 				level = 1,
-				XP = 10,
+				PreviousXP = 0,
+				XP = 0,
 				label = "Free|In-Game Ads",
-				NextXP = 10
+				NextXP = 20
 			}
 		},
 		XPBank = {
 			Balance = 10,
 			Spent = 0
 		}
+	},
+	Bank = {
+		Balance = 10000.00,
+		Debits = [],
+		Credits = [["SBE_10000","starting balance entry",1,10000.00]]
 	},
 	game_id = 0,
 	game_diffuclty = 0 # Effect $, ratings, bugs, etc. 
@@ -303,41 +323,94 @@ class playerGameClass:
 		return playerGamesDict
 		
 
+class playerBank:
+	var playerData:Dictionary
+	func _init(d:Dictionary):
+		self.playerData = d
+	func _sumDebits() -> float:
+		var ret:float = 0.0
+		var debitsa:Array = self.playerData.Bank.Debits
+		for de in debitsa:
+			ret += float(de[3])
+		return ret
+	func _sumCredits() -> float:
+		var ret:float = 0.0
+		var creditsa:Array = self.playerData.Bank.Credits
+		for ce in creditsa:
+			ret += float(ce[3])
+		return ret
+	func _calcBalance():
+		var currbal:float = float(self.playerData.Bank.Balance)
+		var debits:float = self._sumDebits()
+		var credits:float = self._sumCredits()
+		var newbal:float = credits - debits
+		self.playerData.Bank.Balance = newbal
+	func addEntry(type:String,name:String,day:int,value:float):
+		var entrya:Array = self.playerData.Bank[type] #Expect type = Debits or Credits
+		var dkey = OS.get_unique_id()
+		var new_entry:Array = [[dkey,name,day,value]]
+		entrya.append_array(new_entry)
+		self.playerData.Bank[type] = entrya
+		self._calcBalance()
+
 class playerResearch:
 	var playerData:Dictionary
 	var newData:Array
 	var updateData:Array
 	var _toNxt:int = 0
+	var _newXP:int = 0
 	func _init(d:Dictionary):
 		self.playerData = d
-	func _calcBaseXP(xp) -> int:
+	func _calcBaseXP(xp,cl,cnxp,prevxp) -> int:
 		var ret:int = 0
-		if xp >= 20 and xp < 50:
+		var nxp:int = 0
+		if cl == 1 and xp >= 20:
 			ret = 2
-			self._toNxt = 50 - xp
-		elif xp >= 50 and xp < 80:
+			nxp = xp-20
+			self._toNxt = 50 - nxp
+			self._newXP = nxp
+		elif cl == 2 and xp >= 50:
 			ret = 3
-			self._toNxt = 80 - xp
-		elif xp >= 80 and xp < 120:
+			nxp = xp - 50
+			self._toNxt = 80 - nxp
+			self._newXP = nxp
+		elif cl == 3 and xp >= 80:
 			ret = 4
-			self._toNxt = 120 - xp
-		elif xp >= 120 and xp < 170:
+			nxp = xp - 80
+			self._toNxt = 120 - nxp
+			self._newXP = nxp
+		elif cl == 4 and xp >= 120:
 			ret = 5
-			self._toNxt = 170 - xp
-		elif xp >= 170:
+			nxp = xp -120
+			self._toNxt = 170 - nxp
+			self._newXP = nxp
+		elif (cl == 5 and xp >= 170) or cl == 6:
 			ret = 6
-		else:
-			ret = 1
-			self._toNxt = 20 - xp
+			self._toNxt = 0
+			self._newXP = xp
+		# Final piece:
+		if ret == 0:
+			self._newXP = xp
+			ret = cl
+			self._toNxt = cnxp - (self._newXP - prevxp)
 		return ret
-	func _calcType(t:String):
+	func _calcType(t:String,tv:String):
 		var xp:int=0
 		var lvl:int=1
-		for k in self.playerData.RD[t].keys():
-			xp = int(self.playerData.RD[t][k]["XP"])
-			lvl = self._calcBaseXP(xp)
-			self.playerData.RD[t][k]["level"] = lvl
-			self.playerData.RD[t][k]["NextXP"] = self._toNxt
+		var cl:int=1
+		var cnxp:int=0
+		var prevxp:int=0
+		var k = tv
+		xp = int(self.playerData.RD[t][k]["XP"])
+		cl = int(self.playerData.RD[t][k]["level"])
+		cnxp = int(self.playerData.RD[t][k]["NextXP"])
+		prevxp = int(self.playerData.RD[t][k]["PreviousXP"])
+		lvl = self._calcBaseXP(xp,cl,cnxp,prevxp)
+		self.playerData.RD[t][k]["level"] = lvl
+		self.playerData.RD[t][k]["XP"] = self._newXP
+		self.playerData.RD[t][k]["NextXP"] = self._toNxt
+		self.playerData.RD[t][k]["PreviousXP"] = self._newXP
+				
 	func _checkType(t:String,v:String) -> bool:
 		var ret:bool = true
 		for k in self.playerData.RD[t].keys():
@@ -360,8 +433,9 @@ class playerResearch:
 		RDt.keys().append(nt)
 		RDt[nt] = {
 			level = 1,
-			XP = 10,
-			NextXP = 10
+			PreviousXP = 0,
+			XP = 0,
+			NextXP = 20
 		}
 		self.playerData.RD[t] = RDt
 	func _updateXPBank(v:int):
@@ -380,14 +454,8 @@ class playerResearch:
 		RDt[tv]["XP"] = cxp
 		self.playerData.RD[t] = RDt
 		self._updateXPBank(v)
-	func _calcTypeUpdates():
-		self._calcType("topics")
-		self._calcType("genres")
-		self._calcType("platforms")
-		self._calcType("audiences")
-		self._calcType("styles")
-		self._calcType("sizes")
-		self._calcType("publishing")
+	func _calcTypeUpdates(t:String,tv:String):
+		self._calcType(t,tv)
 	func addNewData(nt:String):
 		self.newData.append(nt)
 	func addUpdateData(upt:String,uptc:String,upv:int):
@@ -399,8 +467,8 @@ class playerResearch:
 			self._newType(v)
 		for vu in self.updateData:
 			self._updateType(vu[0],vu[1],vu[2])
-		# Update Research Types for playerData:
-		self._calcTypeUpdates()
+			# Update Research Types for playerData:
+			self._calcTypeUpdates(vu[0],vu[1])
 
 enum gameEvents {
 	DEBUG = 0,
