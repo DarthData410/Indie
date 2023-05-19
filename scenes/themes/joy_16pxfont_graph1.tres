@@ -1,0 +1,7 @@
+[gd_resource type="Theme" load_steps=2 format=3 uid="uid://bbkib4m1bt4t3"]
+
+[ext_resource type="FontFile" uid="uid://bp17nvk3j288l" path="res://assets/fonts/1joystix.ttf" id="1_c1nqu"]
+
+[resource]
+default_font = ExtResource("1_c1nqu")
+default_font_size = 16

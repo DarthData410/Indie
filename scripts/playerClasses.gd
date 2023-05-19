@@ -325,6 +325,68 @@ class playerGameClass:
 
 class playerBank:
 	var playerData:Dictionary
+	var periods:Dictionary = {
+		period1 = {
+			value = 0,
+			day_start = 0,
+			day_end = 30
+		},
+		period2 = {
+			value = 0,
+			day_start = 31,
+			day_end = 60
+		},
+		period3 = {
+			value = 0,
+			day_start = 61,
+			day_end = 90
+		},
+		period4 = {
+			value = 0,
+			day_start = 91,
+			day_end = 120
+		},
+		period5 = {
+			value = 0,
+			day_start = 121,
+			day_end = 150
+		},
+		period6 = {
+			value = 0,
+			day_start = 151,
+			day_end = 180
+		},
+		period7 = {
+			value = 0,
+			day_start = 181,
+			day_end = 210
+		},
+		period8 = {
+			value = 0,
+			day_start = 211,
+			day_end = 240
+		},
+		period9 = {
+			value = 0,
+			day_start = 241,
+			day_end = 270
+		},
+		period10 = {
+			value = 0,
+			day_start = 271,
+			day_end = 300
+		},
+		period11 = {
+			value = 0,
+			day_start = 301,
+			day_end = 330
+		},
+		period12 = {
+			value = 0,
+			day_start = 331,
+			day_end = 360
+		}
+	}
 	func _init(d:Dictionary):
 		self.playerData = d
 	func _sumDebits() -> float:
@@ -332,19 +394,19 @@ class playerBank:
 		var debitsa:Array = self.playerData.Bank.Debits
 		for de in debitsa:
 			ret += float(de[3])
-		return ret
+		return roundf(ret)
 	func _sumCredits() -> float:
 		var ret:float = 0.0
 		var creditsa:Array = self.playerData.Bank.Credits
 		for ce in creditsa:
 			ret += float(ce[3])
-		return ret
+		return roundf(ret)
 	func _calcBalance():
 		var currbal:float = float(self.playerData.Bank.Balance)
 		var debits:float = self._sumDebits()
 		var credits:float = self._sumCredits()
 		var newbal:float = credits - debits
-		self.playerData.Bank.Balance = newbal
+		self.playerData.Bank.Balance = roundf(newbal)
 	func addEntry(type:String,name:String,day:int,value:float):
 		var entrya:Array = self.playerData.Bank[type] #Expect type = Debits or Credits
 		var dkey = OS.get_unique_id()
@@ -565,7 +627,7 @@ class GameSalesEvent extends gameEvent:
 		super._init(gkey,ea,gd,gameEvents.GameSales)
 	func calcValue(x:float,y:float) -> float:
 		var ret:float = super.calcValue(x,y)
-		ret = (ret*self.GamePrice)
+		ret = roundf(ret*self.GamePrice)
 		var dsr:Array
 		dsr = [[self.GameKey,self.GameDay,ret]]
 		self.EventArray.append_array(dsr)

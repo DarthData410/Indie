@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://chinfrxym514"]
+[gd_scene load_steps=25 format=3 uid="uid://chinfrxym514"]
 
 [ext_resource type="FontFile" uid="uid://bp17nvk3j288l" path="res://assets/fonts/1joystix.ttf" id="1_ts3ii"]
 [ext_resource type="Script" path="res://scripts/maingame.gd" id="1_uv0v1"]
@@ -16,6 +16,7 @@
 [ext_resource type="Texture2D" uid="uid://du6vg7xqlo8ee" path="res://assets/images/basic_controller.png" id="12_sknx7"]
 [ext_resource type="Texture2D" uid="uid://bru5fo6tvyng5" path="res://assets/images/Play_Arrow.png" id="12_u4com"]
 [ext_resource type="Texture2D" uid="uid://cvqn3itw8rtah" path="res://assets/images/Revenue_Report_Button.png" id="13_7y6m6"]
+[ext_resource type="Theme" uid="uid://bbkib4m1bt4t3" path="res://scenes/themes/joy_16pxfont_graph1.tres" id="13_dn6wr"]
 [ext_resource type="Texture2D" uid="uid://btsk7drpbt3gj" path="res://assets/images/Bank_Button.png" id="14_83nss"]
 [ext_resource type="Texture2D" uid="uid://qiwvgk210mk4" path="res://assets/images/Create_Game_Button.png" id="15_o28ue"]
 [ext_resource type="Texture2D" uid="uid://0bhf4ojj43w0" path="res://assets/images/Research_Button.png" id="16_oksy7"]
@@ -46,6 +47,9 @@ border_color = Color(0.984314, 0.984314, 0.984314, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2f145"]
 bg_color = Color(0.984314, 0.984314, 0.984314, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fgqp4"]
+bg_color = Color(0.882353, 0.882353, 0.882353, 1)
 
 [node name="MainGame" type="Node2D"]
 script = ExtResource("1_uv0v1")
@@ -1172,6 +1176,7 @@ theme_override_colors/font_focus_color = Color(0.611765, 0.941176, 0.984314, 1)
 text = "Create Game!"
 
 [node name="NGCancelBtn" type="Button" parent="GameLayer/NewGameDev"]
+layout_mode = 0
 offset_left = 852.0
 offset_top = 193.0
 offset_right = 880.0
@@ -1684,41 +1689,45 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="CurrBalancelbl" type="Label" parent="GameLayer/Bank/BankInfo"]
-offset_left = 44.0
-offset_top = 86.0
-offset_right = 309.0
-offset_bottom = 113.0
+layout_mode = 0
+offset_left = 179.0
+offset_top = 25.0
+offset_right = 444.0
+offset_bottom = 52.0
 theme = ExtResource("6_osqr8")
 theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
 text = "Current Balance:"
 
 [node name="CurrBalanceValuelbl" type="Label" parent="GameLayer/Bank/BankInfo"]
-offset_left = 328.0
-offset_top = 86.0
-offset_right = 638.0
-offset_bottom = 113.0
+layout_mode = 0
+offset_left = 456.0
+offset_top = 25.0
+offset_right = 717.0
+offset_bottom = 52.0
 theme = ExtResource("6_osqr8")
 text = "$ 0.00"
 
-[node name="TestLine" type="Line2D" parent="GameLayer/Bank/BankInfo"]
-position = Vector2(44, 200)
-points = PackedVector2Array(-27, 39, 30, 29, 64, -9, 85, 19, 156, -27, 215, 28, 402, -26, 507, -30, 559, -2, 682, -47)
-default_color = Color(0.792157, 0.141176, 0.00784314, 1)
-begin_cap_mode = 1
-end_cap_mode = 2
-
 [node name="pointbtn" type="TextureButton" parent="GameLayer/Bank/BankInfo"]
-visible = false
 layout_mode = 0
-offset_left = -3.0
-offset_top = 217.0
-offset_right = 45.0
-offset_bottom = 258.0
+offset_left = 141.0
+offset_top = 25.0
+offset_right = 170.0
+offset_bottom = 53.0
 texture_normal = ExtResource("12_sknx7")
 ignore_texture_size = true
 stretch_mode = 0
 
+[node name="BalGraph" type="Panel" parent="GameLayer/Bank/BankInfo"]
+layout_mode = 0
+offset_left = 25.0
+offset_top = 61.0
+offset_right = 721.0
+offset_bottom = 261.0
+theme = ExtResource("13_dn6wr")
+theme_override_styles/panel = SubResource("StyleBoxFlat_fgqp4")
+
 [node name="BankCloseBtn" type="Button" parent="GameLayer/Bank"]
+layout_mode = 0
 offset_left = 625.0
 offset_top = 480.0
 offset_right = 716.0
@@ -1887,6 +1896,7 @@ stretch_mode = 0
 [connection signal="pressed" from="GameLayer/Research/ResInfo/ResSpendBtn" to="." method="_on_res_spend_btn_pressed"]
 [connection signal="pressed" from="GameLayer/Research/ResInfo/ResCloseBtn" to="." method="_on_res_ok_btn_pressed"]
 [connection signal="visibility_changed" from="GameLayer/Bank" to="." method="_on_bank_visibility_changed"]
+[connection signal="gui_input" from="GameLayer/Bank/BankInfo/BalGraph" to="." method="_on_bal_graph_gui_input"]
 [connection signal="pressed" from="GameLayer/Bank/BankCloseBtn" to="." method="_on_bank_close_btn_pressed"]
 [connection signal="value_changed" from="GameLayer/GCITimeMultiplyhs" to="." method="_on_gci_time_multiplyhs_value_changed"]
 [connection signal="pressed" from="GameLayer/PauseBtn" to="." method="_on_gc_pausebtn_pressed"]

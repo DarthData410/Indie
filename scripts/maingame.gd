@@ -42,6 +42,10 @@ var CTestPhase = gdata.CurrentTestPhase
 # Research Global Objects:
 @onready var CurrentResearch:Dictionary = gdata.ResearchData
 
+# Bank Objects:
+@onready var BankGraph:Line2D = load("res://scripts/data/BankGraph.gd").new()
+@onready var BankGraphLoaded = false
+
 # Time Objects:
 @onready var game_clock = gc.GameClock.new()
 @onready var game_timer:Timer = Timer.new()
@@ -60,6 +64,8 @@ func _ready():
 	resmenu_popup.connect("index_pressed",self._on_resmenu_index_pressed)
 	_init_timers()
 	_research_create_all()
+	# bank section:
+	
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
@@ -86,7 +92,7 @@ func _init_timers():
 
 func game_sales_timeout():
 	GameSalesEvt = pC.GameSalesEvent.new(lastCreatedGame.get_key(),lastCreatedGame.gameSales,game_clock.GameDays(),9.99) # TODO: Remove hardcoded GamePrice of $9.99
-	GameSalesEvt.calcValue(1,1) # TODO: Logic for calculating sales by.
+	GameSalesEvt.calcValue(randf_range(0.25,1.25),randf_range(2.5,19.5)) # TODO: Logic for calculating sales by.
 	lastCreatedGame.gameSales = GameSalesEvt.EventArray
 	print(lastCreatedGame.gameSales)
 	if lastCreatedGame.gameSalesDays <= gameSalesMax:
@@ -174,6 +180,7 @@ func _save_player_data():
 	gs.PlayerData(playerData)
 	# Convert array of player game classes to dict of dicts:
 	gs.GameData(pC.playerGameClass.get_playerGamesDict(playerGames))
+	MiscWrapper.Objects.clear()
 	MiscWrapper.Objects.append(game_clock.to_dict())
 	MiscWrapper.Objects.append(GameRatings)
 	gs.Misc(MiscWrapper)
@@ -968,52 +975,58 @@ func _on_ng_cancel_btn_pressed():
 
 func _update_bank_details():
 	$GameLayer/Bank/BankInfo/CurrBalanceValuelbl.text = "$ " + str(playerData.Bank.Balance)
-	
+	_update_bank_base_linegraph()
 
 func _on_bank_visibility_changed():
 	if $GameLayer/Bank.visible == true:
 		$GameLayer/BackgroundTxtBtn.visible = false
-		_update_bank_base_linegraph()
+		_update_bank_details()
 	else:
 		if $GameLayer/BackgroundTxtBtn.visible == false:
 			$GameLayer/BackgroundTxtBtn.visible = true
 
 func _update_bank_base_linegraph():
-	# TODO: Add as a script that extends TextureButton to add members
-	# for setting what the node button is. This could then be part of 
-	# Array of buttons from a larger class/script file that extends from
-	# Line2D, which is the used to build the initial credit/debits:
-	# **************
-	# for now just one active button for modeling purposes.
+	var bgp = $GameLayer/Bank/BankInfo/BalGraph
+	var bc = $GameLayer/Bank
+	if BankGraphLoaded:
+		bgp.remove_child(BankGraph)
+		BankGraph.clear_values()
+		BankGraph.clear_points()
+	else:
+		BankGraphLoaded = true
+	#BankGraph.add_value(0)
+	var clr:Color = Color.DARK_GREEN
+	BankGraph.GraphSize = bgp.size
+	var bgpp = bgp.position
+	var bcp = bc.position
+	BankGraph.parent_position = Vector2((bgpp.x+bcp.x),(bgpp.y+bcp.y))
 	
-	var lg2d:Line2D = Line2D.new()
-	lg2d.position.x = 44
-	lg2d.position.y = 300
-	lg2d.add_point(Vector2(1,1)) # 10000.00
-	lg2d.add_point(Vector2(120,180)) # 10100.00
-	lg2d.add_point(Vector2(220,190)) # 10050.00
-	lg2d.add_point(Vector2(320,120)) # 10500.00
-	lg2d.add_point(Vector2(420,80)) # 10700.00
-	lg2d.add_point(Vector2(520,-40)) # 11500.00
-	var clr:Color = Color.GREEN
-	lg2d.default_color = clr
-	$GameLayer/Bank/BankInfo.add_child(lg2d)
+	# Create Credits Graph:
+	var rolling:float = 0.0
+	for c in playerData.Bank.Credits:
+		rolling += c[3]
+		BankGraph.add_value(rolling)
 	
-	var p1btn = $GameLayer/Bank/BankInfo/pointbtn.duplicate()
-	var p1btnv:Vector2 = lg2d.points[0]
-	p1btnv.x += lg2d.position.x - (p1btn.size.x/2)
-	p1btnv.y += lg2d.position.y - (p1btn.size.y/2)
-	p1btn.position = p1btnv
-	p1btn.visible = true
-	p1btn.connect("pressed",_line_graph_node_btn_pressed)
+	BankGraph.create_graph()
+	BankGraph.default_color = clr
+	BankGraph.visible = true
+	BankGraph.width = 6
+	bgp.add_child(BankGraph)
 	
-	$GameLayer/Bank/BankInfo.add_child(p1btn)
-	#var l2d:Line2D = Line2D.new()
-	#l2d.draw_dashed_line(Vector2())
-	#lg2d.draw_line(lgsv,lgev,clr)
 
 func _line_graph_node_btn_pressed():
 	gsys.msgdialog("This is a place holder for graph node texture buttons to launch into detials.","Place Holder - Modeling Graph Node Btns")
 
 func _on_bank_close_btn_pressed():
 	$GameLayer/Bank.visible = false
+
+func _on_bal_graph_gui_input(event):
+	if event is InputEventMouseMotion:
+		var vp = get_viewport()
+		var mpos = get_viewport().get_mouse_position()
+		print(mpos)
+		for gv in BankGraph.Values:
+			if gv.collide(mpos):
+				gsys.msgdialog(gv.valueMsg(),"Graph Point")
+				break
+		
