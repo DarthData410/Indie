@@ -8,6 +8,7 @@
 [ext_resource type="StyleBox" uid="uid://db6hsghjxok65" path="res://scenes/themes/phase_stylebox_a.tres" id="6_f2dyv"]
 [ext_resource type="Theme" uid="uid://blexf7fdbf2cb" path="res://scenes/themes/joytheme_20px_white_font.tres" id="6_osqr8"]
 [ext_resource type="Texture2D" uid="uid://buepwojusw0yr" path="res://assets/images/Platform_Desktop_a.png" id="7_oun2x"]
+[ext_resource type="Theme" uid="uid://crw7ystn825g7" path="res://scenes/themes/joy_14pxfont_graph1.tres" id="7_ud0au"]
 [ext_resource type="Texture2D" uid="uid://crrca35e4lxv0" path="res://assets/images/Platform_Web_a.png" id="8_16ku3"]
 [ext_resource type="Texture2D" uid="uid://bhynywx0c0leb" path="res://assets/images/Platform_GameSystem_a.png" id="9_yn1qr"]
 [ext_resource type="Texture2D" uid="uid://cwdjv2hi6l1va" path="res://assets/images/Platform_Mobile_a.png" id="10_npye5"]
@@ -16,7 +17,6 @@
 [ext_resource type="Texture2D" uid="uid://du6vg7xqlo8ee" path="res://assets/images/basic_controller.png" id="12_sknx7"]
 [ext_resource type="Texture2D" uid="uid://bru5fo6tvyng5" path="res://assets/images/Play_Arrow.png" id="12_u4com"]
 [ext_resource type="Texture2D" uid="uid://cvqn3itw8rtah" path="res://assets/images/Revenue_Report_Button.png" id="13_7y6m6"]
-[ext_resource type="Theme" uid="uid://bbkib4m1bt4t3" path="res://scenes/themes/joy_16pxfont_graph1.tres" id="13_dn6wr"]
 [ext_resource type="Texture2D" uid="uid://btsk7drpbt3gj" path="res://assets/images/Bank_Button.png" id="14_83nss"]
 [ext_resource type="Texture2D" uid="uid://qiwvgk210mk4" path="res://assets/images/Create_Game_Button.png" id="15_o28ue"]
 [ext_resource type="Texture2D" uid="uid://0bhf4ojj43w0" path="res://assets/images/Research_Button.png" id="16_oksy7"]
@@ -444,6 +444,7 @@ offset_left = 27.0
 offset_top = 135.0
 offset_right = 278.0
 offset_bottom = 365.0
+theme = ExtResource("7_ud0au")
 allow_reselect = true
 same_column_width = true
 
@@ -463,6 +464,7 @@ offset_left = 323.0
 offset_top = 135.0
 offset_right = 574.0
 offset_bottom = 365.0
+theme = ExtResource("7_ud0au")
 allow_reselect = true
 same_column_width = true
 
@@ -508,6 +510,7 @@ offset_left = 27.0
 offset_top = 53.0
 offset_right = 278.0
 offset_bottom = 203.0
+theme = ExtResource("7_ud0au")
 allow_reselect = true
 same_column_width = true
 
@@ -527,6 +530,7 @@ offset_left = 323.0
 offset_top = 53.0
 offset_right = 574.0
 offset_bottom = 203.0
+theme = ExtResource("7_ud0au")
 allow_reselect = true
 same_column_width = true
 
@@ -546,6 +550,7 @@ offset_left = 27.0
 offset_top = 237.0
 offset_right = 278.0
 offset_bottom = 387.0
+theme = ExtResource("7_ud0au")
 allow_reselect = true
 same_column_width = true
 
@@ -565,6 +570,7 @@ offset_left = 323.0
 offset_top = 237.0
 offset_right = 574.0
 offset_bottom = 387.0
+theme = ExtResource("7_ud0au")
 allow_reselect = true
 same_column_width = true
 
@@ -1717,13 +1723,22 @@ texture_normal = ExtResource("12_sknx7")
 ignore_texture_size = true
 stretch_mode = 0
 
+[node name="CurrYear" type="Label" parent="GameLayer/Bank/BankInfo"]
+offset_left = 615.0
+offset_top = 32.0
+offset_right = 720.0
+offset_bottom = 59.0
+theme = ExtResource("6_osqr8")
+text = "YYYY"
+horizontal_alignment = 2
+
 [node name="BalGraph" type="Panel" parent="GameLayer/Bank/BankInfo"]
 layout_mode = 0
 offset_left = 25.0
 offset_top = 61.0
 offset_right = 721.0
 offset_bottom = 261.0
-theme = ExtResource("13_dn6wr")
+theme = ExtResource("7_ud0au")
 theme_override_styles/panel = SubResource("StyleBoxFlat_fgqp4")
 
 [node name="BankCloseBtn" type="Button" parent="GameLayer/Bank"]

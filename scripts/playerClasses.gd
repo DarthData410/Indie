@@ -151,8 +151,12 @@ var playerData : Dictionary = {
 	},
 	Bank = {
 		Balance = 10000.00,
+		PeriodBalances = { 
+			Years = [2015],
+			Balances = []
+		},
 		Debits = [],
-		Credits = [["SBE_10000","starting balance entry",1,10000.00]]
+		Credits = [["SBE_10000","starting balance entry",1,1,1,1,2015,10000.00]]
 	},
 	game_id = 0,
 	game_diffuclty = 0 # Effect $, ratings, bugs, etc. 
@@ -325,95 +329,81 @@ class playerGameClass:
 
 class playerBank:
 	var playerData:Dictionary
-	var periods:Dictionary = {
-		period1 = {
-			value = 0,
-			day_start = 0,
-			day_end = 30
-		},
-		period2 = {
-			value = 0,
-			day_start = 31,
-			day_end = 60
-		},
-		period3 = {
-			value = 0,
-			day_start = 61,
-			day_end = 90
-		},
-		period4 = {
-			value = 0,
-			day_start = 91,
-			day_end = 120
-		},
-		period5 = {
-			value = 0,
-			day_start = 121,
-			day_end = 150
-		},
-		period6 = {
-			value = 0,
-			day_start = 151,
-			day_end = 180
-		},
-		period7 = {
-			value = 0,
-			day_start = 181,
-			day_end = 210
-		},
-		period8 = {
-			value = 0,
-			day_start = 211,
-			day_end = 240
-		},
-		period9 = {
-			value = 0,
-			day_start = 241,
-			day_end = 270
-		},
-		period10 = {
-			value = 0,
-			day_start = 271,
-			day_end = 300
-		},
-		period11 = {
-			value = 0,
-			day_start = 301,
-			day_end = 330
-		},
-		period12 = {
-			value = 0,
-			day_start = 331,
-			day_end = 360
-		}
-	}
 	func _init(d:Dictionary):
 		self.playerData = d
 	func _sumDebits() -> float:
 		var ret:float = 0.0
 		var debitsa:Array = self.playerData.Bank.Debits
 		for de in debitsa:
-			ret += float(de[3])
-		return roundf(ret)
+			ret += float(de[7])
+		return snappedf(ret,0.01)
 	func _sumCredits() -> float:
 		var ret:float = 0.0
 		var creditsa:Array = self.playerData.Bank.Credits
 		for ce in creditsa:
-			ret += float(ce[3])
-		return roundf(ret)
+			ret += float(ce[7])
+		return snappedf(ret,0.01)
+	func _calcSinglePeriod(p:int,y:int) -> float:
+		var ret:float = 0
+		var creds:float = 0
+		var debs:float = 0
+		var ca:Array = self.playerData.Bank.Credits
+		for c in ca:
+			if c[3] == p and c[6] == y:
+				creds += c[7]
+		var da:Array = self.playerData.Bank.Debits
+		for d in da:
+			if d[3] == p and d[6] == y:
+				debs += d[7]
+		ret = creds - debs
+		return ret
+	func _calcPeriodBals():
+		var ps:Array = [1,2,3,4,5,6,7,8,9,10,11,12]
+		var pby:Array = self.playerData.Bank.PeriodBalances.Years
+		var pb:Array = self.playerData.Bank.PeriodBalances.Balances
+		var pbe:Array
+		var pbne:Array
+		var cpb:float = 0
+		pb.clear()
+		for y in pby:
+			pbe.clear()
+			for p in ps:
+				cpb = self._calcSinglePeriod(p,y)
+				pbne.append([p,cpb])
+			pbe.append([y,pbne])
+			pb.append_array(pbe)
+		self.playerData.Bank.PeriodBalances.Balances = pb
 	func _calcBalance():
 		var currbal:float = float(self.playerData.Bank.Balance)
 		var debits:float = self._sumDebits()
 		var credits:float = self._sumCredits()
+		self._calcPeriodBals()
 		var newbal:float = credits - debits
-		self.playerData.Bank.Balance = roundf(newbal)
-	func addEntry(type:String,name:String,day:int,value:float):
+		self.playerData.Bank.Balance = snappedf(newbal,0.01)
+	func _calcPeriodYr(y:int):
+		var ret:int = 0
+		# Check existing Year value:
+		var pbya:Array = self.playerData.Bank.PeriodBalances.Years
+		if !pbya.has(y):
+			pbya.append(y)
+		self.playerData.Bank.PeriodBalances.Years = pbya
+	func addEntry(type:String,name:String,day:int,gymd:int,gym:int,gy:int,value:float):
 		var entrya:Array = self.playerData.Bank[type] #Expect type = Debits or Credits
 		var dkey = OS.get_unique_id()
-		var new_entry:Array = [[dkey,name,day,value]]
+		self._calcPeriodYr(gy)
+		var period = gym
+		var new_entry:Array = [[dkey,name,day,period,gymd,gym,gy,value]]
 		entrya.append_array(new_entry)
 		self.playerData.Bank[type] = entrya
 		self._calcBalance()
+	func getPeriodValuesByYr(y:int) -> Array:
+		var ret:Array = []
+		var pba:Array = self.playerData.Bank.PeriodBalances.Balances
+		for pbya in pba:
+			if pbya[0] == y:
+				ret = pbya[1]
+				break
+		return ret
 
 class playerResearch:
 	var playerData:Dictionary
@@ -614,7 +604,7 @@ class GameRatingsEvent extends gameEvent:
 	func calcValue(x:float,y:float) -> float:
 		var ret:float = super.calcValue(x,y) # x,y can influence the scoring
 		ret = ((self._calcRate(self._calcPhases(),self._calcRD())) * ret) * 10 # 1-10 scoring
-		ret = roundf(ret)
+		ret = snappedf(ret,0.01)
 		var ra:Array
 		ra = [[self.GameKey,self.GameDay,ret,self.Agent]]
 		self.EventArray.append_array(ra)
@@ -627,7 +617,7 @@ class GameSalesEvent extends gameEvent:
 		super._init(gkey,ea,gd,gameEvents.GameSales)
 	func calcValue(x:float,y:float) -> float:
 		var ret:float = super.calcValue(x,y)
-		ret = roundf(ret*self.GamePrice)
+		ret = snappedf(ret*self.GamePrice,0.01)
 		var dsr:Array
 		dsr = [[self.GameKey,self.GameDay,ret]]
 		self.EventArray.append_array(dsr)

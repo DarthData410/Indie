@@ -34,7 +34,7 @@ var CTestPhase = gdata.CurrentTestPhase
 
 # Sales Objects:
 @onready var GameSalesEvt
-@onready var gameSalesMax:int = 20 #TODO Add logic for different publishing options | DEBUG @ 20
+@onready var gameSalesMax:int = 30 #TODO Add logic for different publishing options | DEBUG @ 30
 
 # Ratings Objects:
 @onready var GameRatings:Dictionary = pC.playerGameRatings
@@ -104,7 +104,8 @@ func game_sales_timeout():
 		# TODO: Finalize updates for end of sales to bank. This will add total and end of timer
 		# Should this be a daily, weekly, monthly sales? Monthly dev for now:
 		var bank = pC.playerBank.new(playerData)
-		bank.addEntry("Credits","Game Sales: "+lastCreatedGame.title,game_clock.GameDays(),lastCreatedGame.calc_gameSalesTot())
+		#addEntry(type:String,name:String,day:int,gymd:int,gym:int,gy:int,value:float):
+		bank.addEntry("Credits","Game Sales: "+lastCreatedGame.title,game_clock.GameDays(),game_clock.GameMonthDay(),game_clock.GameMonth(),game_clock.GameYear(),lastCreatedGame.calc_gameSalesTot())
 		playerData = bank.playerData
 		_update_bank_details()
 		gsys.msgdialog("Place holder for game sales over \n Total Sales: "+str(lastCreatedGame.calc_gameSalesTot()),"Game Sales End Place Holder")
@@ -112,7 +113,7 @@ func game_sales_timeout():
 
 func create_monthly_debits():
 	var bank = pC.playerBank.new(playerData)
-	bank.addEntry("Debits","Monthly Debits",game_clock.GameDays(),150.00)
+	bank.addEntry("Debits","Monthly Debits",game_clock.GameDays(),game_clock.GameMonthDay(),game_clock.GameMonth(),game_clock.GameYear(),randf_range(295.00,1275.00))
 	playerData = bank.playerData
 	_update_bank_details()
 
@@ -123,7 +124,8 @@ func game_clock_timeout():
 		# fire month based events:
 		create_monthly_debits()
 		
-	# Finalie updates for game_clock	
+	# Finalie updates for game_clock
+	game_clock.GameYear()
 	game_clock.SetIterations(i)
 	game_clock.SetElaspedMS()
 	game_clock.CalcGameDays()
@@ -212,8 +214,18 @@ func _load_player_data():
 		_load_game_info()
 		if !$GameLayer/LoadedGameData.visible:
 			$GameLayer/LoadedGameData.visible = true
-	
-	
+		# TODO: REMOVE PRINTING OF LOADED DATA FOR TESTING
+		# DEBUG:
+		print(" *** META *** \n")
+		print(gs.Meta())
+		print("\n *** PLAYER DATA *** \n")
+		print(gs.PlayerData())
+		print("\n *** GAME DATA *** \n")
+		print(gs.GameData())
+		print("\n *** MISC DATA *** \n")
+		print(gs.Misc())
+		print("\n\n --- END DEBUG LOADED DATA ---")
+		
 
 func _load_game_info():
 	$GameLayer/LoadedGameData/LoadedGameInfo/LGICompanyNameStr.text = playerData.company_name
@@ -994,18 +1006,38 @@ func _update_bank_base_linegraph():
 		BankGraph.clear_points()
 	else:
 		BankGraphLoaded = true
-	#BankGraph.add_value(0)
+	BankGraph.add_value(0)
 	var clr:Color = Color.DARK_GREEN
 	BankGraph.GraphSize = bgp.size
 	var bgpp = bgp.position
 	var bcp = bc.position
 	BankGraph.parent_position = Vector2((bgpp.x+bcp.x),(bgpp.y+bcp.y))
 	
-	# Create Credits Graph:
+	# Create Balance Graph, based on period balances:
 	var rolling:float = 0.0
-	for c in playerData.Bank.Credits:
-		rolling += c[3]
-		BankGraph.add_value(rolling)
+	var pbv:float = 0.0
+	var bank = pC.playerBank.new(playerData)
+	$GameLayer/Bank/BankInfo/CurrYear.text = str(game_clock.GameYear())
+	var pyb:Array = bank.getPeriodValuesByYr(game_clock.GameYear()) # TESTING FOR NOW
+	for pe in pyb:
+		pbv = float(pe[1])
+		if pbv != 0:
+			rolling += pbv
+			BankGraph.add_value(rolling)
+	
+	'
+	for pbk in playerData.Bank.PeriodBalances.Balances.keys():
+		pby = playerData.Bank.PeriodBalances[pbk]
+		for pbyk in pby:
+			pbv = float(pby[pbyk])
+			if pbv != 0:
+				rolling += pbv
+				BankGraph.add_value(rolling)
+	'
+	# Create Credits Graph:
+	#for c in playerData.Bank.Credits:
+	#	rolling += c[3]
+	#	BankGraph.add_value(rolling)
 	
 	BankGraph.create_graph()
 	BankGraph.default_color = clr
@@ -1024,7 +1056,7 @@ func _on_bal_graph_gui_input(event):
 	if event is InputEventMouseMotion:
 		var vp = get_viewport()
 		var mpos = get_viewport().get_mouse_position()
-		print(mpos)
+		#print(mpos)
 		for gv in BankGraph.Values:
 			if gv.collide(mpos):
 				gsys.msgdialog(gv.valueMsg(),"Graph Point")
