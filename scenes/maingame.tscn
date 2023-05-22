@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://chinfrxym514"]
+[gd_scene load_steps=27 format=3 uid="uid://chinfrxym514"]
 
 [ext_resource type="FontFile" uid="uid://bp17nvk3j288l" path="res://assets/fonts/1joystix.ttf" id="1_ts3ii"]
 [ext_resource type="Script" path="res://scripts/maingame.gd" id="1_uv0v1"]
@@ -18,6 +18,7 @@
 [ext_resource type="Texture2D" uid="uid://bru5fo6tvyng5" path="res://assets/images/Play_Arrow.png" id="12_u4com"]
 [ext_resource type="Texture2D" uid="uid://cvqn3itw8rtah" path="res://assets/images/Revenue_Report_Button.png" id="13_7y6m6"]
 [ext_resource type="Texture2D" uid="uid://btsk7drpbt3gj" path="res://assets/images/Bank_Button.png" id="14_83nss"]
+[ext_resource type="Texture2D" uid="uid://dmvs8qdldkn2y" path="res://assets/images/graphPoint.png" id="14_cht7f"]
 [ext_resource type="Texture2D" uid="uid://qiwvgk210mk4" path="res://assets/images/Create_Game_Button.png" id="15_o28ue"]
 [ext_resource type="Texture2D" uid="uid://0bhf4ojj43w0" path="res://assets/images/Research_Button.png" id="16_oksy7"]
 
@@ -50,6 +51,13 @@ bg_color = Color(0.984314, 0.984314, 0.984314, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fgqp4"]
 bg_color = Color(0.882353, 0.882353, 0.882353, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i1wys"]
+bg_color = Color(0.184314, 0.286275, 0.345098, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
 
 [node name="MainGame" type="Node2D"]
 script = ExtResource("1_uv0v1")
@@ -1691,6 +1699,7 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_bottom = 29.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -1724,10 +1733,11 @@ ignore_texture_size = true
 stretch_mode = 0
 
 [node name="CurrYear" type="Label" parent="GameLayer/Bank/BankInfo"]
+layout_mode = 0
 offset_left = 615.0
-offset_top = 32.0
+offset_top = 265.0
 offset_right = 720.0
-offset_bottom = 59.0
+offset_bottom = 292.0
 theme = ExtResource("6_osqr8")
 text = "YYYY"
 horizontal_alignment = 2
@@ -1741,12 +1751,184 @@ offset_bottom = 261.0
 theme = ExtResource("7_ud0au")
 theme_override_styles/panel = SubResource("StyleBoxFlat_fgqp4")
 
+[node name="graphPointBtn" type="TextureButton" parent="GameLayer/Bank/BankInfo/BalGraph"]
+visible = false
+layout_mode = 0
+offset_left = 674.0
+offset_top = 178.0
+offset_right = 684.0
+offset_bottom = 188.0
+texture_normal = ExtResource("14_cht7f")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="Creditslbl" type="Label" parent="GameLayer/Bank/BankInfo"]
+layout_mode = 0
+offset_left = 25.0
+offset_top = 300.0
+offset_right = 290.0
+offset_bottom = 327.0
+theme = ExtResource("6_osqr8")
+theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
+text = "Credits:"
+
+[node name="Credits" type="Panel" parent="GameLayer/Bank/BankInfo"]
+layout_mode = 0
+offset_left = 25.0
+offset_top = 326.0
+offset_right = 346.0
+offset_bottom = 498.0
+
+[node name="CreditsScroll" type="ScrollContainer" parent="GameLayer/Bank/BankInfo/Credits"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxCredits" type="VBoxContainer" parent="GameLayer/Bank/BankInfo/Credits/CreditsScroll"]
+layout_mode = 2
+theme = ExtResource("7_ud0au")
+
+[node name="Debitslbl" type="Label" parent="GameLayer/Bank/BankInfo"]
+layout_mode = 0
+offset_left = 399.0
+offset_top = 300.0
+offset_right = 664.0
+offset_bottom = 327.0
+theme = ExtResource("6_osqr8")
+theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
+text = "Debits:"
+
+[node name="Debits" type="Panel" parent="GameLayer/Bank/BankInfo"]
+layout_mode = 0
+offset_left = 399.0
+offset_top = 326.0
+offset_right = 720.0
+offset_bottom = 498.0
+
+[node name="DebitsScroll" type="ScrollContainer" parent="GameLayer/Bank/BankInfo/Debits"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxDebits" type="VBoxContainer" parent="GameLayer/Bank/BankInfo/Debits/DebitsScroll"]
+layout_mode = 2
+theme = ExtResource("7_ud0au")
+
 [node name="BankCloseBtn" type="Button" parent="GameLayer/Bank"]
 layout_mode = 0
-offset_left = 625.0
-offset_top = 480.0
-offset_right = 716.0
-offset_bottom = 512.0
+offset_left = 626.0
+offset_top = 509.0
+offset_right = 717.0
+offset_bottom = 541.0
+theme = ExtResource("5_a0024")
+theme_override_colors/font_hover_color = Color(0.611765, 0.941176, 0.984314, 1)
+theme_override_colors/font_focus_color = Color(0.611765, 0.941176, 0.984314, 1)
+text = "Close"
+
+[node name="Revenue" type="Control" parent="GameLayer"]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_left = 225.0
+offset_top = 127.0
+offset_right = 970.0
+offset_bottom = 655.0
+
+[node name="RevInfo" type="Panel" parent="GameLayer/Revenue"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_bottom = 29.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SelectGamelbl" type="Label" parent="GameLayer/Revenue/RevInfo"]
+offset_left = 67.0
+offset_top = 25.0
+offset_right = 332.0
+offset_bottom = 52.0
+theme = ExtResource("6_osqr8")
+theme_override_colors/font_color = Color(0.631373, 0.631373, 0.631373, 1)
+text = "Selected Game:"
+
+[node name="GameSelectMenuBtn" type="MenuButton" parent="GameLayer/Revenue/RevInfo"]
+layout_mode = 0
+offset_left = 306.0
+offset_top = 21.0
+offset_right = 720.0
+offset_bottom = 53.0
+theme = ExtResource("6_osqr8")
+theme_override_styles/normal = SubResource("StyleBoxFlat_i1wys")
+text = "<Select Game>"
+item_count = 1
+popup/item_0/text = "Game one"
+popup/item_0/id = 0
+
+[node name="pointbtn" type="TextureButton" parent="GameLayer/Revenue/RevInfo"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 24.0
+offset_right = 53.0
+offset_bottom = 52.0
+texture_normal = ExtResource("12_sknx7")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="CurrYear" type="Label" parent="GameLayer/Revenue/RevInfo"]
+layout_mode = 0
+offset_left = 615.0
+offset_top = 265.0
+offset_right = 720.0
+offset_bottom = 292.0
+theme = ExtResource("6_osqr8")
+text = "YYYY"
+horizontal_alignment = 2
+
+[node name="RevGraph" type="Panel" parent="GameLayer/Revenue/RevInfo"]
+layout_mode = 0
+offset_left = 25.0
+offset_top = 61.0
+offset_right = 721.0
+offset_bottom = 261.0
+theme = ExtResource("7_ud0au")
+theme_override_styles/panel = SubResource("StyleBoxFlat_fgqp4")
+
+[node name="graphPointBtn" type="TextureButton" parent="GameLayer/Revenue/RevInfo/RevGraph"]
+visible = false
+layout_mode = 0
+offset_left = 674.0
+offset_top = 178.0
+offset_right = 684.0
+offset_bottom = 188.0
+texture_normal = ExtResource("14_cht7f")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="RevScroll" type="ScrollContainer" parent="GameLayer/Revenue/RevInfo/RevGraph"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_scroll_mode = 2
+
+[node name="HBoxRev" type="HBoxContainer" parent="GameLayer/Revenue/RevInfo/RevGraph/RevScroll"]
+layout_mode = 2
+
+[node name="RevCloseBtn" type="Button" parent="GameLayer/Revenue"]
+layout_mode = 0
+offset_left = 626.0
+offset_top = 509.0
+offset_right = 717.0
+offset_bottom = 541.0
 theme = ExtResource("5_a0024")
 theme_override_colors/font_hover_color = Color(0.611765, 0.941176, 0.984314, 1)
 theme_override_colors/font_focus_color = Color(0.611765, 0.941176, 0.984314, 1)
@@ -1822,25 +2004,14 @@ texture_normal = ExtResource("12_u4com")
 ignore_texture_size = true
 stretch_mode = 0
 
-[node name="RevenueRptBtn" type="TextureButton" parent="GameLayer"]
-offset_left = 842.0
+[node name="CreateGameBtn" type="TextureButton" parent="GameLayer"]
+offset_left = 752.0
 offset_top = 10.0
-offset_right = 874.0
+offset_right = 784.0
 offset_bottom = 42.0
-tooltip_text = "Revenue Report"
+tooltip_text = "Create New Game"
 theme = ExtResource("11_xt8ss")
-texture_normal = ExtResource("13_7y6m6")
-ignore_texture_size = true
-stretch_mode = 0
-
-[node name="BankRptBtn" type="TextureButton" parent="GameLayer"]
-offset_left = 887.0
-offset_top = 10.0
-offset_right = 919.0
-offset_bottom = 42.0
-tooltip_text = "Bank Report"
-theme = ExtResource("11_xt8ss")
-texture_normal = ExtResource("14_83nss")
+texture_normal = ExtResource("15_o28ue")
 ignore_texture_size = true
 stretch_mode = 0
 
@@ -1855,14 +2026,25 @@ texture_normal = ExtResource("16_oksy7")
 ignore_texture_size = true
 stretch_mode = 0
 
-[node name="CreateGameBtn" type="TextureButton" parent="GameLayer"]
-offset_left = 752.0
+[node name="RevenueRptBtn" type="TextureButton" parent="GameLayer"]
+offset_left = 842.0
 offset_top = 10.0
-offset_right = 784.0
+offset_right = 874.0
 offset_bottom = 42.0
-tooltip_text = "Create New Game"
+tooltip_text = "Revenue"
 theme = ExtResource("11_xt8ss")
-texture_normal = ExtResource("15_o28ue")
+texture_normal = ExtResource("13_7y6m6")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="BankRptBtn" type="TextureButton" parent="GameLayer"]
+offset_left = 887.0
+offset_top = 10.0
+offset_right = 919.0
+offset_bottom = 42.0
+tooltip_text = "Bank"
+theme = ExtResource("11_xt8ss")
+texture_normal = ExtResource("14_83nss")
 ignore_texture_size = true
 stretch_mode = 0
 
@@ -1913,10 +2095,12 @@ stretch_mode = 0
 [connection signal="visibility_changed" from="GameLayer/Bank" to="." method="_on_bank_visibility_changed"]
 [connection signal="gui_input" from="GameLayer/Bank/BankInfo/BalGraph" to="." method="_on_bal_graph_gui_input"]
 [connection signal="pressed" from="GameLayer/Bank/BankCloseBtn" to="." method="_on_bank_close_btn_pressed"]
+[connection signal="visibility_changed" from="GameLayer/Revenue" to="." method="_on_revenue_visibility_changed"]
+[connection signal="pressed" from="GameLayer/Revenue/RevCloseBtn" to="." method="_on_rev_close_btn_pressed"]
 [connection signal="value_changed" from="GameLayer/GCITimeMultiplyhs" to="." method="_on_gci_time_multiplyhs_value_changed"]
 [connection signal="pressed" from="GameLayer/PauseBtn" to="." method="_on_gc_pausebtn_pressed"]
 [connection signal="pressed" from="GameLayer/StartBtn" to="." method="_on_gc_startbtn_pressed"]
+[connection signal="pressed" from="GameLayer/CreateGameBtn" to="." method="_on_create_game_btn_pressed"]
+[connection signal="pressed" from="GameLayer/ResearchBtn" to="." method="_on_research_btn_pressed"]
 [connection signal="pressed" from="GameLayer/RevenueRptBtn" to="." method="_on_revenue_pressed"]
 [connection signal="pressed" from="GameLayer/BankRptBtn" to="." method="_on_bank_pressed"]
-[connection signal="pressed" from="GameLayer/ResearchBtn" to="." method="_on_research_btn_pressed"]
-[connection signal="pressed" from="GameLayer/CreateGameBtn" to="." method="_on_create_game_btn_pressed"]

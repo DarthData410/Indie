@@ -176,9 +176,8 @@ var MetaWrapper:Dictionary = {
 		Minor = 1,
 		Build = 1
 	},
-	Saved = {
-		Date = Time.get_date_string_from_system()
-	}
+	Saved = Time.get_datetime_string_from_system(),
+	SavedUTC = Time.get_datetime_string_from_system(true)
 }
 
 var MiscWrapper:Dictionary = {

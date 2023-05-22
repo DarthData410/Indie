@@ -23,6 +23,7 @@ var MiscWrapper = gdata.MiscWrapper
 @onready var lastCreatedGame
 @onready var mmenu_popup = $GameLayer/MainMenuBar/MainMenu.get_popup()
 @onready var resmenu_popup = $GameLayer/MainMenuBar/Resources.get_popup()
+@onready var gsm_popup:PopupMenu = $GameLayer/Revenue/RevInfo/GameSelectMenuBtn.get_popup()
 
 # Phase Data Variables:
 # NOTE: These are not persisted as save game data, but rather new
@@ -34,7 +35,7 @@ var CTestPhase = gdata.CurrentTestPhase
 
 # Sales Objects:
 @onready var GameSalesEvt
-@onready var gameSalesMax:int = 30 #TODO Add logic for different publishing options | DEBUG @ 30
+@onready var gameSalesMax:int = 45 #TODO Add logic for different publishing options | DEBUG @ 30
 
 # Ratings Objects:
 @onready var GameRatings:Dictionary = pC.playerGameRatings
@@ -45,6 +46,11 @@ var CTestPhase = gdata.CurrentTestPhase
 # Bank Objects:
 @onready var BankGraph:Line2D = load("res://scripts/data/BankGraph.gd").new()
 @onready var BankGraphLoaded = false
+
+# Revenue Objects:
+@onready var rg = load("res://scripts/data/RevenueGraph.gd").new()
+@onready var RevGraph = rg.RevenueGraph.new()
+@onready var RevGraphLoaded = false
 
 # Time Objects:
 @onready var game_clock = gc.GameClock.new()
@@ -65,7 +71,8 @@ func _ready():
 	_init_timers()
 	_research_create_all()
 	# bank section:
-	
+	# revenue section:
+	gsm_popup.connect("index_pressed",self._on_game_select_index_pressed)
 	
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
@@ -138,7 +145,7 @@ func _on_ng_ok_btn_pressed():
 	playerData.first_name = $GameLayer/NewGameCollectInfo/NewGameInfo/NGUserFirstNameStr.text
 	playerData.last_name = $GameLayer/NewGameCollectInfo/NewGameInfo/NGUserLastNameStr.text
 	$GameLayer/NewGameCollectInfo.visible = false
-	
+	_create_new_game()
 
 func _create_new_game():
 	if !game_dev_inprogress:
@@ -176,20 +183,18 @@ func _on_main_menu_index_pressed(index):
 
 
 func _save_player_data():
-	MetaWrapper.Saved = Time.get_date_string_from_system()
-	#gs.Meta(game_clock.to_dict()) # using meta section to save game clock state
+	MetaWrapper.Saved = Time.get_datetime_string_from_system()
+	MetaWrapper.SavedUTC = Time.get_datetime_string_from_system(true)
 	gs.Meta(MetaWrapper)
 	gs.PlayerData(playerData)
 	# Convert array of player game classes to dict of dicts:
 	gs.GameData(pC.playerGameClass.get_playerGamesDict(playerGames))
-	MiscWrapper.Objects.clear()
+	MiscWrapper.Objects.clear() # Clear previously loaded Misc Objects
 	MiscWrapper.Objects.append(game_clock.to_dict())
 	MiscWrapper.Objects.append(GameRatings)
 	gs.Misc(MiscWrapper)
-	#gs.Misc(GameRatings)
 	gs.WriteSaveGame()
 	
-
 
 func _load_player_data():
 	if FileAccess.file_exists(indie_save_game):
@@ -829,7 +834,7 @@ func _on_ngdtestp_next_btn_pressed():
 
 
 func _on_revenue_pressed():
-	gsys.msgdialog("place holder for game revenue report.","place holder revenue")
+	$GameLayer/Revenue.visible = true
 
 func _on_bank_pressed():
 	$GameLayer/Bank.visible = true
@@ -988,6 +993,8 @@ func _on_ng_cancel_btn_pressed():
 func _update_bank_details():
 	$GameLayer/Bank/BankInfo/CurrBalanceValuelbl.text = "$ " + str(playerData.Bank.Balance)
 	_update_bank_base_linegraph()
+	_update_bank_credits_info_panel()
+	_update_bank_debits_info_panel()
 
 func _on_bank_visibility_changed():
 	if $GameLayer/Bank.visible == true:
@@ -1007,7 +1014,7 @@ func _update_bank_base_linegraph():
 	else:
 		BankGraphLoaded = true
 	BankGraph.add_value(0)
-	var clr:Color = Color.DARK_GREEN
+	var clr:Color = Color.MEDIUM_SEA_GREEN
 	BankGraph.GraphSize = bgp.size
 	var bgpp = bgp.position
 	var bcp = bc.position
@@ -1025,25 +1032,30 @@ func _update_bank_base_linegraph():
 			rolling += pbv
 			BankGraph.add_value(rolling)
 	
-	'
-	for pbk in playerData.Bank.PeriodBalances.Balances.keys():
-		pby = playerData.Bank.PeriodBalances[pbk]
-		for pbyk in pby:
-			pbv = float(pby[pbyk])
-			if pbv != 0:
-				rolling += pbv
-				BankGraph.add_value(rolling)
-	'
-	# Create Credits Graph:
-	#for c in playerData.Bank.Credits:
-	#	rolling += c[3]
-	#	BankGraph.add_value(rolling)
 	
 	BankGraph.create_graph()
 	BankGraph.default_color = clr
 	BankGraph.visible = true
-	BankGraph.width = 6
+	BankGraph.width = 4
 	bgp.add_child(BankGraph)
+	
+	# Add BankGraph Texture Buttons, for points:
+	# First Clear:
+	for y in BankGraph.GraphPointBtns:
+		$GameLayer/Bank/BankInfo/BalGraph.remove_child(y)
+	BankGraph.GraphPointBtns.clear()
+	
+	# Now Add:
+	for x in BankGraph.Values:
+		var pbtn = $GameLayer/Bank/BankInfo/BalGraph/graphPointBtn.duplicate()
+		var pbtnv:Vector2
+		pbtnv.x += x.position.x - (pbtn.size.x/2)
+		pbtnv.y += x.position.y - (pbtn.size.y/2)
+		pbtn.position = pbtnv
+		pbtn.visible = true
+		pbtn.tooltip_text = "$"+x.valueMsg()
+		$GameLayer/Bank/BankInfo/BalGraph.add_child(pbtn)
+		BankGraph.GraphPointBtns.append(pbtn)
 	
 
 func _line_graph_node_btn_pressed():
@@ -1053,6 +1065,7 @@ func _on_bank_close_btn_pressed():
 	$GameLayer/Bank.visible = false
 
 func _on_bal_graph_gui_input(event):
+	# TODO: Possibly Remove - Currently not being used as-of: 05.22.23
 	if event is InputEventMouseMotion:
 		var vp = get_viewport()
 		var mpos = get_viewport().get_mouse_position()
@@ -1062,3 +1075,82 @@ func _on_bal_graph_gui_input(event):
 				gsys.msgdialog(gv.valueMsg(),"Graph Point")
 				break
 		
+
+func _update_bank_credits_info_panel():
+	var vbc = $GameLayer/Bank/BankInfo/Credits/CreditsScroll/VBoxCredits
+	for vbcx in vbc.get_children():
+		vbc.remove_child(vbcx)
+	var bank = pC.playerBank.new(playerData)
+	var csa = bank.getCreditValuesByYr(game_clock.GameYear())
+	for c in csa:
+		var lbl = Label.new()
+		lbl.text = c
+		vbc.add_child(lbl)
+
+func _update_bank_debits_info_panel():
+	var vbd = $GameLayer/Bank/BankInfo/Debits/DebitsScroll/VBoxDebits
+	for vbdx in vbd.get_children():
+		vbd.remove_child(vbdx)
+	var bank = pC.playerBank.new(playerData)
+	var dsa = bank.getDebitValuesByYr(game_clock.GameYear())
+	for d in dsa:
+		var lbl = Label.new()
+		lbl.text = d
+		vbd.add_child(lbl)
+
+
+func _on_revenue_visibility_changed():
+	if $GameLayer/Revenue.visible == true:
+		$GameLayer/BackgroundTxtBtn.visible = false
+		_update_revenue_details()
+	else:
+		if $GameLayer/BackgroundTxtBtn.visible == false:
+			$GameLayer/BackgroundTxtBtn.visible = true
+
+func _update_revenue_details():
+	var gsm:MenuButton = $GameLayer/Revenue/RevInfo/GameSelectMenuBtn
+	gsm_popup.clear()
+	var i:int = 0
+	for g in playerGames:
+		gsm_popup.add_item(g.title,i)
+		i += 1
+
+func _on_game_select_index_pressed(idx):
+	var gsm:MenuButton = $GameLayer/Revenue/RevInfo/GameSelectMenuBtn
+	gsm.text = gsm_popup.get_item_text(idx)
+	var hbr:HBoxContainer = $GameLayer/Revenue/RevInfo/RevGraph/RevScroll/HBoxRev
+	RevGraph.position = Vector2(5,100)
+	for b in RevGraph.bars:
+		hbr.remove_child(b.game_object)
+	var i:int = 0
+	var x:int
+	var y:int
+	for g in playerGames:
+		if g.title == gsm.text:
+			for gs in g.gameSales:
+				var bg = rg.graphBar.new()
+				if i == 0:
+					# first bar
+					x = RevGraph.width / 2
+				else:
+					x = (RevGraph.step*i)
+				y = randi_range(190,5) # testing for now
+				bg.start = Vector2(x,200) # hard coded, start y
+				bg.end = Vector2(x,y)
+				bg.value = snappedf(gs[2],0.01)
+				bg.text = "place holder"
+				RevGraph.add_bar(bg)
+				i += 1
+	
+	for b in RevGraph.bars:
+		var bl:Line2D = Line2D.new()
+		bl.add_point(b.start)
+		bl.add_point(b.end)
+		bl.default_color = RevGraph.color
+		bl.width = RevGraph.width
+		$GameLayer/Revenue/RevInfo/RevGraph/RevScroll/HBoxRev.add_child(bl)
+		#$GameLayer/Revenue/RevInfo/RevGraph/RevScroll/HBoxRev
+
+func _on_rev_close_btn_pressed():
+	$GameLayer/Revenue.visible = false
+

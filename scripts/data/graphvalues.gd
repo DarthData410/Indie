@@ -7,7 +7,7 @@ class graphValue:
 	var mouse_vector:Vector2
 	var mouse_radius:int=3 # default px value
 	func _init(v:float,x:int,y:int):
-		self.value = v
+		self.value = snappedf(v,0.01)
 		self.position = Vector2(x,y)
 	func collide(pos:Vector2) -> bool:
 		var ret:bool = false

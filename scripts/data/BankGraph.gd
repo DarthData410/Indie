@@ -7,6 +7,7 @@ var Values:Array = []
 var min_value:float = 0 
 var max_value:float = 0
 var parent_position:Vector2 = Vector2(0,0)
+var GraphPointBtns:Array = []
 
 # possible derived, hard-coded for now:
 var _v_min_x:int = 5
@@ -24,7 +25,7 @@ func _valuesX() -> Array:
 	var _vx:Array = []
 	var i:int =  0
 	while i < self.Values.size():
-		_vx.append(self._v_min_x+(step*(i)))
+		_vx.append(self._v_min_x+(step*i))
 		i += 1
 	return _vx
 
@@ -39,7 +40,7 @@ func _valuesY() -> Array:
 	var _vy:Array = []
 	var c:int = 0
 	while c < self.Values.size():
-		_vy.append(self._v_min_y-roundf(self.Values[c].value*pnt))
+		_vy.append(self._v_min_y-snappedf((self.Values[c].value*pnt),0.01))
 		c += 1
 	return _vy
 
@@ -66,21 +67,3 @@ func add_value(v:float):
 		self.max_value = v
 	if self.min_value > v:
 		self.min_value = v
-
-
-# ***********************************************************
-# Below here sample code needed for Line2D Graph work:
-	'
-	var p1btn = $GameLayer/Bank/BankInfo/pointbtn.duplicate()
-	var p1btnv:Vector2 = lg2d.points[0]
-	p1btnv.x += lg2d.position.x - (p1btn.size.x/2)
-	p1btnv.y += lg2d.position.y - (p1btn.size.y/2)
-	p1btn.position = p1btnv
-	p1btn.visible = true
-	p1btn.connect("pressed",_line_graph_node_btn_pressed)
-	
-	$GameLayer/Bank/BankInfo.add_child(p1btn)
-	#var l2d:Line2D = Line2D.new()
-	#l2d.draw_dashed_line(Vector2())
-	#lg2d.draw_line(lgsv,lgev,clr)
-	'

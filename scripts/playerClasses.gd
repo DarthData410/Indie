@@ -392,7 +392,8 @@ class playerBank:
 		var dkey = OS.get_unique_id()
 		self._calcPeriodYr(gy)
 		var period = gym
-		var new_entry:Array = [[dkey,name,day,period,gymd,gym,gy,value]]
+		var snvalue:float = snappedf(value,0.01)
+		var new_entry:Array = [[dkey,name,day,period,gymd,gym,gy,snvalue]]
 		entrya.append_array(new_entry)
 		self.playerData.Bank[type] = entrya
 		self._calcBalance()
@@ -403,6 +404,18 @@ class playerBank:
 			if pbya[0] == y:
 				ret = pbya[1]
 				break
+		return ret
+	func getCreditValuesByYr(y:int) -> Array:
+		var ret:Array = []
+		var pbc:Array = self.playerData.Bank.Credits
+		for c in pbc:
+			ret.append("+$"+str(c[7])+" : "+str(c[6])+"-"+str(c[5])+"-"+str(c[4])+" "+str(c[1]))
+		return ret
+	func getDebitValuesByYr(y:int) -> Array:
+		var ret:Array = []
+		var pbd:Array = self.playerData.Bank.Debits
+		for d in pbd:
+			ret.append("-$"+str(d[7])+" : "+str(d[6])+"-"+str(d[5])+"-"+str(d[4])+" "+str(d[1]))
 		return ret
 
 class playerResearch:
@@ -604,7 +617,7 @@ class GameRatingsEvent extends gameEvent:
 	func calcValue(x:float,y:float) -> float:
 		var ret:float = super.calcValue(x,y) # x,y can influence the scoring
 		ret = ((self._calcRate(self._calcPhases(),self._calcRD())) * ret) * 10 # 1-10 scoring
-		ret = snappedf(ret,0.01)
+		ret = snappedf(ret,0.5)
 		var ra:Array
 		ra = [[self.GameKey,self.GameDay,ret,self.Agent]]
 		self.EventArray.append_array(ra)
