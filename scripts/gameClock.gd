@@ -39,7 +39,7 @@ class GameClock:
 			if self._game_year_month > 12:
 				self._game_year_month = 1
 				self._game_year_add += 1
-		self._game_year_month_day = self._monthCheck
+		self._game_year_month_day = (self._monthCheck-1)
 		return ret
 	func SetWaitTime(v:int):
 		self._baseTime = v
@@ -94,6 +94,11 @@ class GameClock:
 		self._current_game_timer_wait_percent = self._current_game_timer_wait/self._baseDay # base day of 500 ms
 	func GetGameTimerWaitPercent() -> float:
 		return self._current_game_timer_wait_percent
+	func GetGameDateStr() -> String:
+		var ret:String = ""
+		ret = str(self.GameYear())
+		ret = ret + "-" + str(self.GameMonth()) + "-" + str(self.GameMonthDay())
+		return ret
 	
 	func to_dict() -> Dictionary:
 		var ret:Dictionary = {

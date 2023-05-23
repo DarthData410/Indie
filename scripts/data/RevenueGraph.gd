@@ -3,7 +3,8 @@ class graphBar:
 	var start:Vector2 = Vector2(0,0)
 	var end:Vector2 = Vector2(0,0)
 	var value:float = 0.0
-	var game_object:Line2D # Line2D object created, and referenced in game
+	var container:CenterContainer # CenterContrainer that contains the Line2D object
+	var line:Line2D # Line2D object created, and referenced in game
 	var text:String = ""
 	
 class RevenueGraph:

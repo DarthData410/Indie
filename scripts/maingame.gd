@@ -97,6 +97,10 @@ func _init_timers():
 	game_sales_timer.one_shot = true
 	add_child(game_sales_timer)
 
+func game_sales_start():
+	game_sales_timer.start()
+	$GameLayer/GameSalesActivelbl.visible = true
+
 func game_sales_timeout():
 	GameSalesEvt = pC.GameSalesEvent.new(lastCreatedGame.get_key(),lastCreatedGame.gameSales,game_clock.GameDays(),9.99) # TODO: Remove hardcoded GamePrice of $9.99
 	GameSalesEvt.calcValue(randf_range(0.25,1.25),randf_range(2.5,19.5)) # TODO: Logic for calculating sales by.
@@ -104,9 +108,10 @@ func game_sales_timeout():
 	print(lastCreatedGame.gameSales)
 	if lastCreatedGame.gameSalesDays <= gameSalesMax:
 		lastCreatedGame.gameSalesDays += 1
-		game_sales_timer.start()
+		game_sales_start()
 	else:
 		game_sales_inprogress = false
+		$GameLayer/GameSalesActivelbl.visible = false
 		_pause_game()
 		# TODO: Finalize updates for end of sales to bank. This will add total and end of timer
 		# Should this be a daily, weekly, monthly sales? Monthly dev for now:
@@ -137,6 +142,7 @@ func game_clock_timeout():
 	game_clock.SetElaspedMS()
 	game_clock.CalcGameDays()
 	$GameLayer/GCIGameDaysValuelbl.text = str(game_clock.GameDays())
+	$GameLayer/GameDatelbl.text = game_clock.GetGameDateStr()
 	game_timer.start()
 	
 
@@ -204,6 +210,7 @@ func _load_player_data():
 		game_clock = gc.GameClock.from_dict(MiscWrapper.Objects[0]) # loaded GameClock from meta
 		GameRatings = MiscWrapper.Objects[1]
 		$GameLayer/GCIGameDaysValuelbl.text = str(game_clock.GameDays())
+		$GameLayer/GameDatelbl.text = game_clock.GetGameDateStr()
 		playerData = gs.PlayerData()
 		var gameData = gs.GameData()
 		
@@ -274,6 +281,8 @@ func _on_game_dev_timer1_timeout():
 		elif cpg.get_platform_spritetype() == 3: # Game System
 			$GameLayer/GameDevComplete/GameDevCompletePnl/PlatformGameSystemA.visible = true
 		$GameLayer/GameDevComplete.visible = true
+		$GameLayer/CurrentTotGameProgress.visible = false
+		$GameLayer/lblCurrentTotGameProgress.visible = false
 	
 
 
@@ -295,7 +304,7 @@ func _on_gdc_ok_btn_pressed():
 	_player_research()
 	game_timer.start()
 	game_running = true
-	game_sales_timer.start()
+	game_sales_start()
 	game_sales_inprogress = true
 	# TODO: Finalize XPBank Balance increase, using events. For now coded on Game Dev Complete
 	# for adding 80 when a game is done.
@@ -471,6 +480,8 @@ func _on_NewGameDev_complete():
 			playerGames.append(npc)
 			game_dev_inprogress = true
 			
+			$GameLayer/CurrentTotGameProgress.visible = true
+			$GameLayer/lblCurrentTotGameProgress.visible = true
 			game_dev_timer1.start()
 			# clear selections:
 			titlestr.text = ""
@@ -573,7 +584,7 @@ func _start_game():
 	if game_dev_inprogress && game_dev_timer1.is_stopped():
 		game_dev_timer1.start()
 	if game_sales_inprogress && game_sales_timer.is_stopped():
-		game_sales_timer.start()
+		game_sales_start()
 	game_running = true
 
 func _pause_game():
@@ -1120,8 +1131,10 @@ func _on_game_select_index_pressed(idx):
 	gsm.text = gsm_popup.get_item_text(idx)
 	var hbr:HBoxContainer = $GameLayer/Revenue/RevInfo/RevGraph/RevScroll/HBoxRev
 	RevGraph.position = Vector2(5,100)
+	RevGraph.width = 15
 	for b in RevGraph.bars:
-		hbr.remove_child(b.game_object)
+		b.container.remove_child(b.line)
+		hbr.remove_child(b.container)
 	var i:int = 0
 	var x:int
 	var y:int
@@ -1129,27 +1142,35 @@ func _on_game_select_index_pressed(idx):
 		if g.title == gsm.text:
 			for gs in g.gameSales:
 				var bg = rg.graphBar.new()
-				if i == 0:
-					# first bar
-					x = RevGraph.width / 2
-				else:
-					x = (RevGraph.step*i)
-				y = randi_range(190,5) # testing for now
-				bg.start = Vector2(x,200) # hard coded, start y
+				x = RevGraph.width
+				y = randi_range(190,10) # testing, 10 is floor
+				bg.start = Vector2(x,190) # 190 is the celing
 				bg.end = Vector2(x,y)
 				bg.value = snappedf(gs[2],0.01)
-				bg.text = "place holder"
+				bg.text = "$"+str(bg.value)
+				
+				# Add CenterContainer Object:
+				var cc = CenterContainer.new()
+				cc.custom_minimum_size = Vector2(RevGraph.width+(RevGraph.width/4),0)
+				cc.size_flags_vertical = Control.SIZE_FILL
+				cc.tooltip_text = bg.text
+				cc.mouse_filter = Control.MOUSE_FILTER_PASS
+				
+				# Add Line2D "game_object":
+				var bl:Line2D = Line2D.new()
+				bl.add_point(bg.start)
+				bl.add_point(bg.end)
+				bl.default_color = RevGraph.color
+				bl.width = RevGraph.width
+				bg.container = cc
+				bg.line = bl
 				RevGraph.add_bar(bg)
+				# add line graph to cc:
+				cc.add_child(bl)
+				hbr.add_child(cc)
 				i += 1
 	
-	for b in RevGraph.bars:
-		var bl:Line2D = Line2D.new()
-		bl.add_point(b.start)
-		bl.add_point(b.end)
-		bl.default_color = RevGraph.color
-		bl.width = RevGraph.width
-		$GameLayer/Revenue/RevInfo/RevGraph/RevScroll/HBoxRev.add_child(bl)
-		#$GameLayer/Revenue/RevInfo/RevGraph/RevScroll/HBoxRev
+	
 
 func _on_rev_close_btn_pressed():
 	$GameLayer/Revenue.visible = false
