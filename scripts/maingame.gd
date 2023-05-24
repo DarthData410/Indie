@@ -102,8 +102,8 @@ func game_sales_start():
 	$GameLayer/GameSalesActivelbl.visible = true
 
 func game_sales_timeout():
-	GameSalesEvt = pC.GameSalesEvent.new(lastCreatedGame.get_key(),lastCreatedGame.gameSales,game_clock.GameDays(),9.99) # TODO: Remove hardcoded GamePrice of $9.99
-	GameSalesEvt.calcValue(randf_range(0.25,1.25),randf_range(2.5,19.5)) # TODO: Logic for calculating sales by.
+	GameSalesEvt = pC.GameSalesEvent.new(lastCreatedGame.get_key(),lastCreatedGame.gameSales,game_clock.GameDays(),game_clock.GameMonthDay(),game_clock.GameMonth(),game_clock.GameYear(),9.99) # TODO: Remove hardcoded GamePrice of $9.99
+	GameSalesEvt.calcValue(randf_range(0.75,1.99),randf_range(4.99,25.99)) # TODO: Logic for calculating sales by.
 	lastCreatedGame.gameSales = GameSalesEvt.EventArray
 	print(lastCreatedGame.gameSales)
 	if lastCreatedGame.gameSalesDays <= gameSalesMax:
@@ -319,7 +319,7 @@ func _update_RDXPBank():
 	playerData = RD.playerData
 
 func _rate_game():
-	var gre = pC.GameRatingsEvent.new(lastCreatedGame.get_key(),GameRatings.Ratings,game_clock.GameDays(),lastCreatedGame,playerData.RD) # TODO: Add agent, DEBUG default for now
+	var gre = pC.GameRatingsEvent.new(lastCreatedGame.get_key(),GameRatings.Ratings,game_clock.GameDays(),game_clock.GameMonthDay(),game_clock.GameMonth(),game_clock.GameYear(),lastCreatedGame,playerData.RD) # TODO: Add agent, DEBUG default for now
 	var rate:float = gre.calcValue(1,1)
 	gsys.msgdialog("Game Rated By: "+gre.Agent+"\n\nRating of: "+str(rate),"Game Rating Place Holder")
 	GameRatings.Ratings = gre.EventArray
@@ -1131,7 +1131,11 @@ func _on_game_select_index_pressed(idx):
 	gsm.text = gsm_popup.get_item_text(idx)
 	var hbr:HBoxContainer = $GameLayer/Revenue/RevInfo/RevGraph/RevScroll/HBoxRev
 	RevGraph.position = Vector2(5,100)
-	RevGraph.width = 15
+	RevGraph.width = 20
+	RevGraph.floor = 190
+	RevGraph.celling = 10
+	for bo in RevGraph.bufferobjs:
+		hbr.remove_child(bo)
 	for b in RevGraph.bars:
 		b.container.remove_child(b.line)
 		hbr.remove_child(b.container)
@@ -1140,21 +1144,22 @@ func _on_game_select_index_pressed(idx):
 	var y:int
 	for g in playerGames:
 		if g.title == gsm.text:
+			RevGraph.min_value = g.gameSalesMin
+			RevGraph.max_value = g.gameSalesMax
 			for gs in g.gameSales:
 				var bg = rg.graphBar.new()
-				x = RevGraph.width
-				y = randi_range(190,10) # testing, 10 is floor
-				bg.start = Vector2(x,190) # 190 is the celing
-				bg.end = Vector2(x,y)
 				bg.value = snappedf(gs[2],0.01)
-				bg.text = "$"+str(bg.value)
-				
+				x = RevGraph.width
+				#y = randi_range(190,10) # testing, 10 is floor
+				y = RevGraph.calc_value_y(bg.value)
+				bg.start = Vector2(x,RevGraph.floor) # 190 
+				bg.end = Vector2(x,y)
+				bg.text = "$"+str(bg.value)+"-"+str(gs[3])+"/"+str(gs[4])+"/"+str(gs[5])
 				# Add CenterContainer Object:
 				var cc = CenterContainer.new()
 				cc.custom_minimum_size = Vector2(RevGraph.width+(RevGraph.width/4),0)
 				cc.size_flags_vertical = Control.SIZE_FILL
 				cc.tooltip_text = bg.text
-				cc.mouse_filter = Control.MOUSE_FILTER_PASS
 				
 				# Add Line2D "game_object":
 				var bl:Line2D = Line2D.new()
@@ -1169,8 +1174,12 @@ func _on_game_select_index_pressed(idx):
 				cc.add_child(bl)
 				hbr.add_child(cc)
 				i += 1
-	
-	
+			# last CC for end-buffer
+			var lcc:CenterContainer = CenterContainer.new()
+			lcc.custom_minimum_size = Vector2((RevGraph.width/2),0)
+			lcc.size_flags_vertical = Control.SIZE_FILL
+			RevGraph.bufferobjs.append(lcc)
+			hbr.add_child(lcc)
 
 func _on_rev_close_btn_pressed():
 	$GameLayer/Revenue.visible = false

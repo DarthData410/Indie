@@ -1927,21 +1927,30 @@ horizontal_scroll_mode = 2
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="CenterContainer4" type="CenterContainer" parent="GameLayer/Revenue/RevInfo/RevGraph/RevScroll/HBoxRev"]
-visible = false
-custom_minimum_size = Vector2(40, 0)
-layout_mode = 2
+[node name="RevDetails" type="Panel" parent="GameLayer/Revenue/RevInfo"]
+layout_mode = 0
+offset_left = 25.0
+offset_top = 296.0
+offset_right = 722.0
+offset_bottom = 496.0
 
-[node name="Line2D" type="Line2D" parent="GameLayer/Revenue/RevInfo/RevGraph/RevScroll/HBoxRev/CenterContainer4"]
-points = PackedVector2Array(10, 190, 10, 80)
-width = 20.0
-default_color = Color(0.380392, 0.384314, 0.905882, 1)
+[node name="RevDetsScroll" type="ScrollContainer" parent="GameLayer/Revenue/RevInfo/RevDetails"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxRevDets" type="VBoxContainer" parent="GameLayer/Revenue/RevInfo/RevDetails/RevDetsScroll"]
+layout_mode = 2
+theme = ExtResource("7_ud0au")
 
 [node name="RevCloseBtn" type="Button" parent="GameLayer/Revenue"]
 layout_mode = 0
-offset_left = 626.0
+offset_left = 630.0
 offset_top = 509.0
-offset_right = 717.0
+offset_right = 721.0
 offset_bottom = 541.0
 theme = ExtResource("5_a0024")
 theme_override_colors/font_hover_color = Color(0.611765, 0.941176, 0.984314, 1)

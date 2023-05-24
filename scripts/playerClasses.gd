@@ -207,6 +207,8 @@ class playerGameClass:
 	var price:float
 	var phaseXPused:Dictionary # Actual values selected by user for: design, dev, testing
 	var gameSales:Array # Used with Game Sales Event
+	var gameSalesMin:float # $ Min day sales total
+	var gameSalesMax:float # $ Max day sales total
 	var gameSalesDays:int # Starting with 0, # of days game on market for sale
 	var publishing:Dictionary # Entry from playerData.RD.publishing node.
 	# variables for in-game settings, XP, calculations, etc:
@@ -290,7 +292,13 @@ class playerGameClass:
 	func calc_gameSalesTot() -> float:
 		var ret:float = 0
 		for a in self.gameSales:
-			ret += a[2]
+			var gds:float = snappedf(a[2],0.01)
+			ret += gds
+			# check set for min/max:
+			if gds < self.gameSalesMin:
+				self.gameSalesMin = gds
+			elif gds > self.gameSalesMax:
+				self.gameSalesMax = gds
 		return ret
 	func to_dict() -> Dictionary:
 		var ret:Dictionary = {
@@ -304,6 +312,9 @@ class playerGameClass:
 			phasexpused = self.phaseXPused,
 			price = self.price,
 			gamesales = self.gameSales,
+			gamesalesmin = self.gameSalesMin,
+			gamesalesmax = self.gameSalesMax,
+			gamesalesdays = self.gameSalesDays,
 			publishing = self.publishing,
 			phaseXP = self.phaseXP,
 			game_id = self.game_id,
@@ -316,6 +327,12 @@ class playerGameClass:
 		ret.created_date = d.created_date
 		ret.gameSales = d.gamesales
 		ret.phaseXPused = d.phasexpused
+		ret.price = d.price
+		ret.gameSalesMax = d.gamesalesmax
+		ret.gameSalesMin = d.gamesalesmin
+		ret.gameSalesDays = d.gamesalesdays
+		ret.publishing = d.publishing
+		ret.phaseXP = d.phaseXP
 		return ret
 	static func get_playerGamesDict(v:Array) -> Dictionary:
 		var playerGamesDict:Dictionary
@@ -546,11 +563,17 @@ class gameEvent:
 	var EventArray:Array # Should be recorded as part of game data.
 	var GameKey:String
 	var GameDay:int
-	func _init(gkey:String,ea:Array,gd:int,ge:gameEvents=gameEvents.DEBUG):
+	var GameYrMthDay:int
+	var GameYrMth:int
+	var GameYr:int
+	func _init(gkey:String,ea:Array,gd:int,gymd:int,gym:int,gy:int,ge:gameEvents=gameEvents.DEBUG):
 		self.GameKey=gkey
 		self.EventArray = ea
 		self.Event = ge
 		self.GameDay = gd
+		self.GameYrMthDay = gymd
+		self.GameYrMth = gym
+		self.GameYr = gy
 	func calcValue(x:float,y:float) -> float:
 		var ret:float = 0.0
 		ret = x*y
@@ -573,13 +596,13 @@ class GameRatingsEvent extends gameEvent:
 	var RD:Dictionary
 	var weighted:float
 	var factor:float
-	func _init(gkey:String,ea:Array,gd:int,g:playerGameClass,rd:Dictionary,w:float=1,f:float=0,gra:String="Indie.GameReviews"):
+	func _init(gkey:String,ea:Array,gd:int,gymd:int,gym:int,gy:int,g:playerGameClass,rd:Dictionary,w:float=1,f:float=0,gra:String="Indie.GameReviews"):
 		self.Agent = gra
 		self.go = g
 		self.RD = rd
 		self.weighted = w
 		self.factor = f
-		super._init(gkey,ea,gd,gameEvents.GameRating)
+		super._init(gkey,ea,gd,gymd,gym,gy,gameEvents.GameRating)
 	func _calcRD() -> float:
 		var ret:float = 0 # NOTE: /100 to equate each to a 0.x value, the threshold based rating effect
 		var topic = self.RD.topics[self.go.topic]["level"] # Level first
@@ -619,20 +642,20 @@ class GameRatingsEvent extends gameEvent:
 		ret = ((self._calcRate(self._calcPhases(),self._calcRD())) * ret) * 10 # 1-10 scoring
 		ret = snappedf(ret,0.5)
 		var ra:Array
-		ra = [[self.GameKey,self.GameDay,ret,self.Agent]]
+		ra = [[self.GameKey,self.GameDay,ret,self.Agent,self.GameYrMthDay,self.GameYrMth,self.GameYr]]
 		self.EventArray.append_array(ra)
 		return ret
 
 class GameSalesEvent extends gameEvent:
 	var GamePrice:float
-	func _init(gkey:String,ea:Array,gd:int,gp:float):
+	func _init(gkey:String,ea:Array,gd:int,gymd:int,gym:int,gy:int,gp:float):
 		self.GamePrice = gp
-		super._init(gkey,ea,gd,gameEvents.GameSales)
+		super._init(gkey,ea,gd,gymd,gym,gy,gameEvents.GameSales)
 	func calcValue(x:float,y:float) -> float:
 		var ret:float = super.calcValue(x,y)
 		ret = snappedf(ret*self.GamePrice,0.01)
 		var dsr:Array
-		dsr = [[self.GameKey,self.GameDay,ret]]
+		dsr = [[self.GameKey,self.GameDay,ret,self.GameYrMthDay,self.GameYrMth,self.GameYr]]
 		self.EventArray.append_array(dsr)
 		return ret
 
